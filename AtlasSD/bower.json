@@ -1,0 +1,15 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "jquery": "2.2.0",
+    "jquery-validation": "1.14.0",
+    "jquery-validation-unobtrusive": "3.2.6",
+    "evol-colorpicker": "3.3.1",
+    "jquery-ui": "1.12.1",
+    "jstree": "3.3.4",
+    "gasparesganga-jquery-loading-overlay": "v1.5.3",
+    "chart.js": "Chart.js#v2.6.0"
+  }
+}

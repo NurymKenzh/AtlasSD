@@ -1,0 +1,125 @@
+@using AtlasSD.Controllers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization;
+@inject IViewLocalizer Localizer
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Upload"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Upload"]</h2>
+<h4>@SharedLocalizer["Regions"]</h4>
+
+<form asp-action="Upload"
+      asp-controller="Regions"
+      method="post"
+      enctype="multipart/form-data">
+    <hr />
+    <input id="backlinktext" type="hidden" name="backlink" />
+    @if(!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <h4>
+            @SharedLocalizer["Error"]: @ViewBag.Error
+        </h4>
+        <br />
+    }
+    @if (ViewBag.Properties == null)
+    {
+        <input type="file" name="File" />
+        <br />
+        <input type="submit" value="@SharedLocalizer["TakeALook"]" />
+    }
+    else
+    {
+        <h4>@SharedLocalizer["UploadDataInThisWay"]</h4>
+        <table class="table">
+            <tr>
+                <th>
+                    @Localizer["RegionsParameters"]
+                </th>
+                <th>
+                    @Localizer["ParametersFromFile"]
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["Year"])
+                </td>
+                <td>
+                    @Html.DropDownList("Year", (IEnumerable<SelectListItem>)ViewBag.Year, htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["Code"])
+                </td>
+                <td>
+                    @Html.DropDownList("Code", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["NameEN"])
+                </td>
+                <td>
+                    @Html.DropDownList("NameEN", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["NameKK"])
+                </td>
+                <td>
+                    @Html.DropDownList("NameKK", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["NameRU"])
+                </td>
+                <td>
+                    @Html.DropDownList("NameRU", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["Area"])
+                </td>
+                <td>
+                    @Html.DropDownList("Area", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.Raw(SharedLocalizer["Population"])
+                </td>
+                <td>
+                    @Html.DropDownList("Population", (List<SelectListItem>)ViewBag.Properties, "", htmlAttributes: new { @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <input type="text" hidden="hidden" name="JsonText" value="@ViewBag.JsonText"/>
+        <input type="submit" value="@SharedLocalizer["Upload"]" />
+    }
+    <br />
+    <br />
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        if (!$('#backlink').prop("href")) {
+            $('#backlink').prop("href", document.referrer);
+        }
+    });
+</script>

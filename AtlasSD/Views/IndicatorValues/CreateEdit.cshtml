@@ -1,0 +1,94 @@
+@model AtlasSD.Models.IndicatorValueViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["CreateEdit"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["CreateEdit"]</h2>
+
+<form asp-action="CreateEdit">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["IndicatorValue"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" asp-for="Source">@SharedLocalizer["Source"]</label>
+            <div class="col-md-10">
+                <label class="control-label">@Model.Source.Name</label>
+                <input type="hidden" asp-for="SourceId" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" asp-for="Bloc">@SharedLocalizer["Bloc"]</label>
+            <div class="col-md-10">
+                <label class="control-label">@Model.Bloc.Name</label>
+                <input type="hidden" asp-for="BlocId" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" asp-for="Group">@SharedLocalizer["Group"]</label>
+            <div class="col-md-10">
+                <label class="control-label">@Model.Group.Name</label>
+                <input type="hidden" asp-for="GroupId" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" asp-for="Indicator">@SharedLocalizer["Indicator"]</label>
+            <div class="col-md-10">
+                <label class="control-label">@Model.Indicator.Name</label>
+                <input type="hidden" asp-for="IndicatorId" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" asp-for="Year">@SharedLocalizer["Year"]</label>
+            <div class="col-md-10">
+                <label class="control-label">@Model.Year</label>
+            </div>
+        </div>
+        @for (int i = 0; i < Model.IndicatorValues.Count; i++)
+        {
+            <div class="form-group region">
+                <label class="col-md-2 control-label">@Model.IndicatorValues[i].Region.Name</label>
+                <div class="col-md-10">
+                    <input type="text" name="IndicatorValues[@i].Value" value="@Model.IndicatorValues[i].Value" class="form-control" />
+                    <input type="hidden" name="IndicatorValues[@i].Id" value="@Model.IndicatorValues[i].Id" class="form-control" />
+                    <input type="hidden" name="IndicatorValues[@i].IndicatorId" value="@Model.IndicatorValues[i].IndicatorId" class="form-control" />
+                    <input type="hidden" name="IndicatorValues[@i].RegionId" value="@Model.IndicatorValues[i].RegionId" class="form-control" />
+                    <input type="hidden" name="IndicatorValues[@i].Year" value="@Model.IndicatorValues[i].Year" class="form-control" />
+                    <input type="hidden" name="IndicatorValues[@i].SourceId" value="@Model.IndicatorValues[i].SourceId" class="form-control" />
+                    @Html.ValidationMessageFor(model => model.IndicatorValues[i].Value, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["CreateEdit"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+    });
+</script>

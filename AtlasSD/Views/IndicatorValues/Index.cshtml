@@ -1,0 +1,463 @@
+@model IndicatorValueIndexPageViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["IndicatorValues"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["IndicatorValues"]</h2>
+
+@{
+    var user = Context.User;
+    bool adminmoderator = false;
+}
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator") || (user.IsInRole("Moderator")))
+    {
+        adminmoderator = true;
+        <p>
+            <a asp-action="CreateEditSelect">@SharedLocalizer["CreateEdit"]</a> |
+            <a asp-action="DownloadForm">@SharedLocalizer["DownloadForm"]</a> |
+            <a asp-action="UploadForm">@SharedLocalizer["UploadForm"]</a> |
+            <a asp-action="Delete">@SharedLocalizer["Delete"]</a>
+        </p>
+    }
+}
+
+
+@using (Html.BeginForm("Index", "IndicatorValues", new {
+    SortOrder = ViewBag.SortOrder,
+    SourceId = ViewBag.SourceIdFilter,
+    Type = ViewBag.TypeFilter,
+    BlocId = ViewBag.BlocIdFilter,
+    GroupId = ViewBag.GroupIdFilter,
+    IndicatorId = ViewBag.IndicatorIdFilter,
+    Year = ViewBag.YearFilter,
+    RegionCode = ViewBag.RegionCodeFilter
+}, FormMethod.Get))
+{
+    @Html.Editor("SortOrder", null, new { htmlAttributes = new { @hidden = "hidden" }, value = ViewBag.SortOrder })
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new {
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage - 1,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new { Page = page,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage + 1,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new { Page = Model.Pager.TotalPages,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Source).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.SourceSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("SourceId", (IEnumerable<SelectListItem>)ViewBag.SourceId, "", htmlAttributes: new { @id = "SourceId", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator.Type).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.TypeSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("Type", (IEnumerable<SelectListItem>)ViewBag.IndicatorTypes, "", htmlAttributes: new { @id = "Type", @class = "form-control", @onchange = "ChangeType()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator.Group.Bloc).ToString(), "Index",
+                        new {
+                            SortOrder = ViewBag.BlocSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, "", htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator.Group).ToString(), "Index",
+                        new {
+                            SortOrder = ViewBag.GroupSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, "", htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.IndicatorSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("IndicatorId", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, "", htmlAttributes: new { @id = "IndicatorId", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Year).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.YearSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("Year", (IEnumerable<SelectListItem>)ViewBag.Year, "", htmlAttributes: new { @id = "Year", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Region).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.RegionSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                    <br />
+                    @Html.DropDownList("RegionCode", (IEnumerable<SelectListItem>)ViewBag.RegionCode, "", htmlAttributes: new { @id = "RegionCode", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Value).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.ValueSort,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </th>
+                <th>
+                    <br />
+                    <input type="submit" value="@SharedLocalizer["Find"]" class="btn btn-default">
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Source.Name)
+                </td>
+                <td>
+                    @SharedLocalizer[item.Indicator.Type]
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Group.Bloc.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Group.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Region.Name)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value)
+                </td>
+                @if (adminmoderator)
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">@SharedLocalizer["Details"]</a>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage - 1,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new
+                        {
+                            Page = page,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage + 1,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.TotalPages,
+                            SortOrder = ViewBag.SortOrder,
+                            SourceId = ViewBag.SourceIdFilter,
+                            Type = ViewBag.TypeFilter,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            IndicatorId = ViewBag.IndicatorIdFilter,
+                            Year = ViewBag.YearFilter,
+                            RegionCode = ViewBag.RegionCodeFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+}
+
+<script>
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+                ChangeGroup();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByTypeBlocGroup")',
+            data: {
+                Type: $('#Type').val(),
+                BlocId: $('#BlocId').val(),
+                GroupId: $('#GroupId').val()
+            },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#IndicatorId").empty();
+                $('#IndicatorId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeType() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByTypeBlocGroup")',
+            data: {
+                Type: $('#Type').val(),
+                BlocId: $('#BlocId').val(),
+                GroupId: $('#GroupId').val()
+            },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#IndicatorId").empty();
+                $('#IndicatorId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        ChangeBloc();
+    });
+</script>

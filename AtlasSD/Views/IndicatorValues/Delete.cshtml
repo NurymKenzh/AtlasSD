@@ -1,0 +1,143 @@
+@model AtlasSD.Models.IndicatorValueViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Delete"]</h2>
+
+<h3>@SharedLocalizer["Delete"]?</h3>
+<form asp-action="Delete">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["IndicatorValues"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Bloc"]</label>
+            <div class="col-md-10">
+                @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
+                <span asp-validation-for="BlocId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Group"]</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
+                <span asp-validation-for="GroupId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Indicator"]</label>
+            <div class="col-md-10">
+                @Html.DropDownList("IndicatorId", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, htmlAttributes: new { @id = "IndicatorId", @class = "form-control" })
+                <span asp-validation-for="IndicatorId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Year"]</label>
+            <div class="col-md-10">
+                @Html.DropDownList("Year", (IEnumerable<SelectListItem>)ViewBag.Year, htmlAttributes: new { @id = "Year", @class = "form-control", @onchange = "ChangeYear(this.Value)" })
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div id="Create" class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a id="backlink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<div id="RegionsCount" hidden="hidden">@Localizer["RegionsCount"]</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    function ChangeYear() {
+        $.ajax({
+            url: '@Url.Action("GetRegionsByYear")',
+            data: { Year: parseInt($('#Year').val()) },
+            type: 'POST',
+            success: function (data) {
+                $(".region").remove();
+                var regionshtml =
+                '<div class="form-group region">' +
+                    '<label class="col-md-2 control-label">' + $('#RegionsCount').html() + '</label>' +
+                    '<div class="col-md-10">' +
+                        '<label class="control-label">' + data.length + '</label>' +
+                    '</div>' +
+                '</div>';
+                $(regionshtml).insertBefore("#Create");
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+                ChangeGroup();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroup")',
+            data: { GroupId: $('#GroupId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#IndicatorId").empty();
+                $('#IndicatorId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+        ChangeYear();
+        ChangeBloc();
+    });
+</script>

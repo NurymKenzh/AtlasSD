@@ -1,0 +1,62 @@
+﻿@using AtlasSD.Controllers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization;
+@inject IViewLocalizer Localizer
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Administration"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Administration"]</h2>
+
+<div>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Users"], "Index", "Users", null, new { @class = "btn btn-default" })
+    </p>
+</div>
+
+<h2>@SharedLocalizer["Directories"]</h2>
+
+<div>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Regions"], "Index", "Regions", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Blocs"], "Index", "Blocs", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Groups"], "Index", "Groups", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Indicators"], "Index", "Indicators", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["ReferencePoints"], "Index", "ReferencePoints", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Sources"], "Index", "Sources", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["DollarRate"], "Index", "DollarRates", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Logs"], "Index", "Logs", null, new { @class = "btn btn-default" })
+    </p>
+    @*<p>
+        @Html.ActionLink(SharedLocalizer["IndicatorValues"], "Index", "IndicatorValues", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Parse"], "Parse", "IndicatorValues", null, new { @class = "btn btn-default" })
+    </p>*@
+    @*<p>
+        @Html.ActionLink(SharedLocalizer["Maps"], "Index", "Maps", null, new { @class = "btn btn-default" })
+    </p>*@
+    @*<p>
+        @Html.ActionLink(SharedLocalizer["Report"], "Report", "IndicatorValues", null, new { @class = "btn btn-default" })
+    </p>*@
+    <p>
+        @Html.ActionLink(SharedLocalizer["Feedback"], "Index", "Feedbacks", null, new { @class = "btn btn-default" })
+    </p>
+</div>

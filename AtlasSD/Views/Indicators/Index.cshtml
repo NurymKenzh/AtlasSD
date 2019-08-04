@@ -1,0 +1,202 @@
+@model IndicatorIndexPageViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Indicators"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Indicators"]</h2>
+
+<p>
+    <a asp-action="Create">@SharedLocalizer["Create"]</a>
+</p>
+
+@using (Html.BeginForm("Index", "Indicators", new { SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter }, FormMethod.Get))
+{
+    @Html.Editor("SortOrder", null, new { htmlAttributes = new { @hidden = "hidden" }, value = ViewBag.SortOrder })
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new { SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage - 1, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new { Page = page, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage + 1, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new { Page = Model.Pager.TotalPages, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+        </ul>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().Type).ToString(), "Index",
+                        new { SortOrder = ViewBag.TypeSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.DropDownList("Type", (IEnumerable<SelectListItem>)ViewBag.IndicatorTypes, "", htmlAttributes: new { @id = "Type", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().Group.Bloc).ToString(), "Index",
+                        new { SortOrder = ViewBag.BlocSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, "", htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().GroupId).ToString(), "Index",
+                        new { SortOrder = ViewBag.GroupSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, "", htmlAttributes: new { @id = "GroupId", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().Code).ToString(), "Index",
+                        new { SortOrder = ViewBag.CodeSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.Editor("Code", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().NameEN).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameENSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.Editor("NameEN", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().NameKK).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameKKSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.Editor("NameKK", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(g => g.Items.FirstOrDefault().NameRU).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameRUSort, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                    <br />
+                    @Html.Editor("NameRU", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    <br />
+                    <input type="submit" value="@SharedLocalizer["Find"]" class="btn btn-default">
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @SharedLocalizer[item.Type]
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Group.Bloc.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Group.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameEN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameKK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameRU)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer["Edit"]</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">@SharedLocalizer["Details"]</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@SharedLocalizer["Delete"]</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new { SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage - 1, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new { Page = page, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage + 1, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new { Page = Model.Pager.TotalPages, SortOrder = ViewBag.SortOrder, Type = ViewBag.TypeFilter, BlocId = ViewBag.BlocIdFilter, GroupId = ViewBag.GroupIdFilter, Code = ViewBag.Code, NameEN = ViewBag.NameENFilter, NameKK = ViewBag.NameKKFilter, NameRU = ViewBag.NameRUFilter })
+                </li>
+            }
+        </ul>
+    }
+}
+
+<script>
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        ChangeBloc();
+    });
+</script>

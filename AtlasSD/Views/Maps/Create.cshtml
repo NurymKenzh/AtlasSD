@@ -1,0 +1,431 @@
+@model AtlasSD.Models.Map
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-ui/jquery-ui.js"></script>
+<script src="~/lib/evol-colorpicker/js/evol-colorpicker.js"></script>
+<link href="~/lib/jquery-ui/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+<link href="~/lib/evol-colorpicker/css/evol-colorpicker.css" rel="stylesheet" />
+
+@{
+    ViewData["Title"] = SharedLocalizer["Create"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Create"]</h2>
+
+<div hidden="hidden">
+    <div id="ColorsCount">@Model.MapIntervals.Count()</div>
+    <div id="Remove">@SharedLocalizer["Remove"]</div>
+    <div id="ColorPickerString">@SharedLocalizer["ColorPicker"]</div>
+    <select id="IndicatorBlocIds" class="form-control" asp-items="ViewBag.IndicatorBlocIds"></select>
+    <div id="IndicatorsCount">@Model.MapIndicators.Count()</div>
+</div>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["Map"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="NameEN" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameEN" class="form-control" />
+                <span asp-validation-for="NameEN" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NameKK" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameKK" class="form-control" />
+                <span asp-validation-for="NameKK" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NameRU" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameRU" class="form-control" />
+                <span asp-validation-for="NameRU" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DescriptionEN" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="DescriptionEN" class="form-control" />*@
+                @Html.TextArea("DescriptionEN", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="DescriptionEN" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DescriptionKK" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="DescriptionKK" class="form-control" />*@
+                @Html.TextArea("DescriptionKK", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="DescriptionKK" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DescriptionRU" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="DescriptionRU" class="form-control" />*@
+                @Html.TextArea("DescriptionRU", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="DescriptionRU" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="KeywordsEN" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="KeywordsEN" class="form-control" />*@
+                @Html.TextArea("KeywordsEN", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="KeywordsEN" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="KeywordsKK" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="KeywordsKK" class="form-control" />*@
+                @Html.TextArea("KeywordsKK", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="KeywordsKK" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="KeywordsRU" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="KeywordsRU" class="form-control" />*@
+                @Html.TextArea("KeywordsRU", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="KeywordsRU" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Bloc"]</label>
+            <div class="col-md-10">
+                <input id="BlocIdInput" type="hidden" name="BlocId" value="@Model.BlocId" class="form-control" />
+                @*<select id="BlocId" class="form-control" asp-items="ViewBag.BlocId" onchange="ChangeBloc()"></select>*@
+                @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, "", htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Group"]</label>
+            <div class="col-md-10">
+                <input id="GroupIdInput" type="hidden" name="GroupId" value="@Model.GroupId" class="form-control" />
+                @*<select id="GroupId" class="form-control" asp-items="ViewBag.GroupId" onchange="ChangeGroup()"></select>*@
+                @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, "", htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Indicator"]</label>
+            <div class="col-md-10">
+                <input id="IndicatorIdInput" type="hidden" name="IndicatorId" value="@Model.IndicatorId" class="form-control" />
+                <select id="IndicatorId" class="form-control" asp-items="ViewBag.IndicatorId" onchange="ChangeIndicator()"></select>
+                @Html.ValidationMessageFor(model => model.IndicatorId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Style"]</label>
+            <div class="col-md-10">
+                <input type="button" value="@SharedLocalizer["Add"]" class="btn btn-default" onclick="AddColor()" />
+                <table id="Colors" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label asp-for="Colors"></label>
+                            </th>
+                            <th>
+                                <label id="minvalue" asp-for="MinValues" hidden="hidden"></label>
+                                <label id="minvalues"></label>
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.MapIntervals.Count(); i++)
+                        {
+                            string Color = "Color" + i.ToString(),
+                                Value = "ValueInput" + i.ToString(),
+                                inputid = "ColorInput" + i.ToString();
+                            <tr id="@Color">
+                                <td>
+                                    <input id="@inputid" type="text" name="MapIntervals[@i].Color" value="@Model.MapIntervals[i].Color" class="form-control-color" />
+                                    <span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIntervals[@i].Color"></span>
+                                </td>
+                                <td>
+                                    <input id="@Value" type="text" name="MapIntervals[@i].MinValue" value="@Model.MapIntervals[i].MinValue" class="form-control" />
+                                    @Html.ValidationMessageFor(model => model.MapIntervals[i].MinValue, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    <input type="button" value="@SharedLocalizer["Remove"]" class="btn btn-default" onclick="RemoveColor(@i)" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Chart"]</label>
+            <div class="col-md-10">
+                <input type="button" value="@SharedLocalizer["Add"]" class="btn btn-default" onclick="AddIndicator()" />
+                <table id="Indicators" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label asp-for="Colors"></label>
+                            </th>
+                            <th>
+                                <label>@SharedLocalizer["Bloc"]</label>
+                            </th>
+                            <th>
+                                <label>@SharedLocalizer["Group"]</label>
+                            </th>
+                            <th>
+                                <label>@SharedLocalizer["Indicator"]</label>
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (Model.MapIndicators != null)
+                            {
+                                @for (int i = 0; i < Model.MapIndicators.Count(); i++)
+                                {
+                                    string Indicator = "Indicator" + i.ToString(),
+                                        IndicatorColorInput = "IndicatorColorInput" + i.ToString(),
+                                        IndicatorId = "IndicatorId" + i.ToString(),
+                                        BlocId = "BlocId" + i.ToString(),
+                                        GroupId = "GroupId" + i.ToString(),
+                                        IndicatorIdInput = "IndicatorIdInput" + i.ToString();
+                                    <tr id="@Indicator">
+                                        <td>
+                                            <input id="@IndicatorColorInput" type="text" name="MapIndicators[@i].Color" value="@Model.MapIndicators[i].Color" class="form-control-color" />
+                                            <span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIndicators[@i].Color"></span>
+                                        </td>
+                                        <td>
+                                            <select id="@BlocId" name="MapIndicators[@i].BlocId" class="form-control" asp-items="ViewBag.IndicatorsBlocId[@i]" onchange="ChangeIndicatorBloc(@i)"></select>
+                                        </td>
+                                        <td>
+                                            <select id="@GroupId" name="MapIndicators[@i].GroupId" class="form-control" asp-items="ViewBag.IndicatorsGroupId[@i]" onchange="ChangeIndicatorGroup(@i)"></select>
+                                        </td>
+                                        <td>
+                                            <input id="@IndicatorIdInput" type="hidden" name="MapIndicators[@i].IndicatorId" value="@Model.MapIndicators[i].IndicatorId" class="form-control" />
+                                            <select id="@IndicatorId" class="form-control" asp-items="ViewBag.IndicatorsIndicatorId[@i]" onchange="ChangeIndicatorIndicator(@i)"></select>
+                                            @Html.ValidationMessageFor(model => model.MapIndicators[i].IndicatorId, "", new { @class = "text-danger" })
+                                        </td>
+                                        <td><input type="button" value="@SharedLocalizer["Remove"]" class="btn btn-default" onclick="RemoveIndicator(@i)" /></td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Create"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    function ChangeBloc() {
+        $('#BlocIdInput').val($('#BlocId').val());
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $('#GroupId').empty();
+                $('#GroupId').append(optionhtml);
+                ChangeGroup();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup() {
+        $('#GroupIdInput').val($('#GroupId').val());
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroup")',
+            data: { GroupId: $('#GroupId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $('#IndicatorId').empty();
+                $('#IndicatorId').append(optionhtml);
+                ChangeIndicator();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeIndicator() {
+        $('#IndicatorIdInput').val($('#IndicatorId').val());
+        if ($('#IndicatorIdInput').val() == '0') {
+            $('#IndicatorIdInput').val(null);
+        }
+        $.ajax({
+            url: '@Url.Action("GetIndicatorValueMaxMin")',
+            data: { IndicatorId: $('#IndicatorId').val() },
+            type: 'POST',
+            success: function (data) {
+                $('#minvalues').html($('#minvalue').html() + ' (' + data.min + ' - ' + data.max + ')');
+            },
+            error: function () {
+            }
+        });
+    };
+
+    var ColorsCount = parseInt($('#ColorsCount').html());
+    function AddColor() {
+        var tr = '<tr id="Color' + ColorsCount + '"><td><input id="ColorInput' + ColorsCount + '" type="text" name="MapIntervals[' + ColorsCount + '].Color" value="#ffffff" class="form-control-color" />' +
+            '<span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIntervals[' + ColorsCount + '].Color"></span></td><td>' +
+            '<input id="ValueInput' + ColorsCount + '" type="text" name="MapIntervals[' + ColorsCount + '].MinValue" value="" class="form-control" />' +
+            '<span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIntervals[' + ColorsCount + '].MinValue"></span></td>' +
+            '<td><input type="button" value="' + $('#Remove').html() + '" class="btn btn-default" onclick="RemoveColor(' + ColorsCount + ')" /></td></tr>'
+        $('#Colors > tbody:last-child').append(tr);
+        $("#ColorInput" + ColorsCount).colorpicker({
+            strings: $('#ColorPickerString').html()
+        });
+        ColorsCount++;
+    };
+
+    function RemoveColor(row) {
+        $('#ColorInput' + row).val('');
+        $('#ValueInput' + row).val('0');
+        $('#Color' + row).hide();
+    };
+
+    var IndicatorsCount = parseInt($('#IndicatorsCount').html());
+    function AddIndicator() {
+        var tr = '<tr id="Indicator' + IndicatorsCount + '"><td><input id="IndicatorColorInput' + IndicatorsCount + '" type="text" name="MapIndicators[' + IndicatorsCount + '].Color" value="#ffffff" class="form-control-color" />' +
+            '<span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIndicators[' + IndicatorsCount + '].Color"></span></td><td>' +
+            '<select id="BlocId' + IndicatorsCount + '" name="MapIndicators[' + IndicatorsCount + '].BlocId" class="form-control" onchange="ChangeIndicatorBloc(' + IndicatorsCount + ')"></select></td><td>' +
+            '<select id="GroupId' + IndicatorsCount + '" name="MapIndicators[' + IndicatorsCount + '].GroupId" class="form-control" onchange="ChangeIndicatorGroup(' + IndicatorsCount + ')"></select></td><td>' +
+            '<input id="IndicatorIdInput' + IndicatorsCount + '" type="hidden" name="MapIndicators[' + IndicatorsCount + '].IndicatorId" value="" class="form-control"/>' +
+            '<select id="IndicatorId' + IndicatorsCount + '" class="form-control" onchange="ChangeIndicatorIndicator(' + IndicatorsCount + ')"></select></td>' +
+            '<span class="field-validation-valid text-danger" data-valmsg-replace="true" data-valmsg-for="MapIndicators[' + IndicatorsCount + '].IndicatorId"></span>' +
+            '<td><input type="button" value="' + $('#Remove').html() + '" class="btn btn-default" onclick="RemoveIndicator(' + IndicatorsCount + ')" /></td></tr>'
+        $('#Indicators > tbody:last-child').append(tr);
+        $("#IndicatorColorInput" + IndicatorsCount).colorpicker({
+            strings: $('#ColorPickerString').html()
+        });
+        $('#BlocId' + IndicatorsCount).append($("#IndicatorBlocIds > option").clone());
+        ChangeIndicatorBloc(IndicatorsCount);
+        IndicatorsCount++;
+    };
+
+    function RemoveIndicator(row) {
+        $('#IndicatorColorInput' + row).val('');
+        $('#IndicatorIdInput' + row).val('0');
+        $('#Indicator' + row).hide();
+    };
+
+    function ChangeIndicatorBloc(i) {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: {
+                BlocId: $('#BlocId' + i).val() },
+            type: 'POST',
+            success: function (data) {
+                
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId' + i).val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $('#GroupId' + i).empty();
+                $('#GroupId' + i).append(optionhtml);
+                ChangeIndicatorGroup(i);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeIndicatorGroup(i) {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroup")',
+            data: { GroupId: $('#GroupId' + i).val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId' + i).val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $('#IndicatorId' + i).empty();
+                $('#IndicatorId' + i).append(optionhtml);
+                ChangeIndicatorIndicator(i);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeIndicatorIndicator(i) {
+        $('#IndicatorIdInput' + i).val($('#IndicatorId' + i).val());
+    };
+    
+    $(document).ready(function (e) {
+        $('#minvalues').html($('#minvalue').html());
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+        for (i = 0; i < ColorsCount; i++) {
+            $("#ColorInput" + i).colorpicker({
+                strings: $('#ColorPickerString').html()
+            });
+        }
+        for (i = 0; i < IndicatorsCount; i++) {
+            $("#IndicatorColorInput" + i).colorpicker({
+                strings: $('#ColorPickerString').html()
+            });
+        }
+        for (i = 0; i < IndicatorsCount; i++) {
+            $('#IndicatorIdInput' + i).val($('#IndicatorId' + i).val());
+        }
+        if ($('#IndicatorIdInput').val() == '0') {
+            $('#IndicatorIdInput').val(null);
+        }
+        ChangeBloc();
+    });
+</script>

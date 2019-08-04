@@ -1,0 +1,57 @@
+@model AtlasSD.Models.Source
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Delete"]</h2>
+
+<h3>@SharedLocalizer["Delete"]?</h3>
+<div>
+    <h4>@SharedLocalizer["Source"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="Id" />
+        <dt>
+            @Html.DisplayNameFor(model => model.NameEN)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameEN)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameKK)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameKK)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameRU)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameRU)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-actions no-color">
+            <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-default" /> |
+            <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+    });
+</script>

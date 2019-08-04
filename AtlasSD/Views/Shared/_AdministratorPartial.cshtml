@@ -1,0 +1,28 @@
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{ 
+    var user = Context.User;//HttpContext.Current.User;
+    bool adminmoderator = false;
+}
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator"))
+    {
+        <li>@Html.ActionLink(SharedLocalizer["Data"], "Data", "IndicatorValues")</li>
+        <li><a asp-area="" asp-controller="IndicatorValues" asp-action="ReportYears">@SharedLocalizer["Report"]</a></li>
+        <li>@Html.ActionLink(SharedLocalizer["Administration"], "Index", "Administrator")</li>
+        adminmoderator = true;
+    }
+    if (user.IsInRole("Moderator"))
+    {
+        <li>@Html.ActionLink(SharedLocalizer["Data"], "Data", "IndicatorValues")</li>
+        <li><a asp-area="" asp-controller="IndicatorValues" asp-action="ReportYears">@SharedLocalizer["Report"]</a></li>
+        <li>@Html.ActionLink(SharedLocalizer["Directories"], "Index", "Moderator")</li>
+        adminmoderator = true;
+    }
+}
+@if (!adminmoderator)
+{
+    <li><a asp-area="" asp-controller="IndicatorValues" asp-action="ReportYears">@SharedLocalizer["Report"]</a></li>
+}

@@ -1,0 +1,61 @@
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["UploadForm"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["UploadForm"]</h2>
+
+@using (Html.BeginForm("UploadForm", "IndicatorValues", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <h4>
+            @SharedLocalizer["Error"]: @ViewBag.Error
+        </h4>
+        <br />
+    }
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["IndicatorValues"]</h4>
+        <hr />
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Files"]</label>
+            <div class="col-md-10">
+                <input type="file" class="multiple" name="Files" multiple />
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Upload"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@if (ViewBag.Report != null)
+{
+    if (ViewBag.Report != "")
+    {
+        @Html.Raw(ViewBag.Report)
+    }
+}
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+    });
+</script>

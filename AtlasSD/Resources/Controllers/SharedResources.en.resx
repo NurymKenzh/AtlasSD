@@ -1,0 +1,507 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Area" xml:space="preserve">
+    <value>Area, thousand sq. km.</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="Bloc" xml:space="preserve">
+    <value>Indicator block</value>
+  </data>
+  <data name="Blocs" xml:space="preserve">
+    <value>Indicator blocks</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Metric group</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Metric groups</value>
+  </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Indicator</value>
+  </data>
+  <data name="Indicators" xml:space="preserve">
+    <value>Indicators</value>
+  </data>
+  <data name="IndicatorValue" xml:space="preserve">
+    <value>Indicator value</value>
+  </data>
+  <data name="IndicatorValues" xml:space="preserve">
+    <value>Indicator values</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NameEN" xml:space="preserve">
+    <value>Name (english)</value>
+  </data>
+  <data name="NameKK" xml:space="preserve">
+    <value>Name (kazakh)</value>
+  </data>
+  <data name="NameRU" xml:space="preserve">
+    <value>Name (russian)</value>
+  </data>
+  <data name="Population" xml:space="preserve">
+    <value>Population</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Region</value>
+  </data>
+  <data name="Regions" xml:space="preserve">
+    <value>Regions</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="CreateEdit" xml:space="preserve">
+    <value>Create / Edit</value>
+  </data>
+  <data name="ColorPicker" xml:space="preserve">
+    <value>Theme Colors,Standard Colors,Web Colors,Theme Colors,Back to Palette,History,No history yet.</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="Maps" xml:space="preserve">
+    <value>Maps</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Style" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="Directories" xml:space="preserve">
+    <value>Directories</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="RegionsCount" xml:space="preserve">
+    <value>Regions count</value>
+  </data>
+  <data name="YearFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="YearTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="DataAlreadyExists" xml:space="preserve">
+    <value>Data already exists</value>
+  </data>
+  <data name="NoDataToCopy" xml:space="preserve">
+    <value>No data to copy</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="IntegralIndicators" xml:space="preserve">
+    <value>Integral indicators</value>
+  </data>
+  <data name="Chart" xml:space="preserve">
+    <value>Chart</value>
+  </data>
+  <data name="ChartBar" xml:space="preserve">
+    <value>Bar</value>
+  </data>
+  <data name="ChartDonut" xml:space="preserve">
+    <value>Donut</value>
+  </data>
+  <data name="ChartPie" xml:space="preserve">
+    <value>Pie</value>
+  </data>
+  <data name="ChartPie3D" xml:space="preserve">
+    <value>Pie 3D</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Added</value>
+  </data>
+  <data name="Changed" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="DownloadForm" xml:space="preserve">
+    <value>Download template</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="UploadForm" xml:space="preserve">
+    <value>Upload data</value>
+  </data>
+  <data name="ErrorDuringFormulaExecuting" xml:space="preserve">
+    <value>Error during formula executing!</value>
+  </data>
+  <data name="Formula" xml:space="preserve">
+    <value>Formula</value>
+  </data>
+  <data name="Operands" xml:space="preserve">
+    <value>Operands</value>
+  </data>
+  <data name="WrongFormula" xml:space="preserve">
+    <value>Wrong formula!</value>
+  </data>
+  <data name="Calculated" xml:space="preserve">
+    <value>Calculated</value>
+  </data>
+  <data name="Integral" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Regular" xml:space="preserve">
+    <value>Statistical</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Maximum" xml:space="preserve">
+    <value>Maximum</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Minimum</value>
+  </data>
+  <data name="ReferencePoint" xml:space="preserve">
+    <value>Reference point</value>
+  </data>
+  <data name="ReferencePoints" xml:space="preserve">
+    <value>Reference points</value>
+  </data>
+  <data name="AddMax" xml:space="preserve">
+    <value>Add maximum</value>
+  </data>
+  <data name="AddMin" xml:space="preserve">
+    <value>Add minimum</value>
+  </data>
+  <data name="AddValue" xml:space="preserve">
+    <value>Add value</value>
+  </data>
+  <data name="AreaPure" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Data source sype</value>
+  </data>
+  <data name="Sources" xml:space="preserve">
+    <value>Data source sypes</value>
+  </data>
+  <data name="ErrorDublicateValue" xml:space="preserve">
+    <value>An object with this value already exists!</value>
+  </data>
+  <data name="FieldIsRequired" xml:space="preserve">
+    <value>The {0} field is required</value>
+  </data>
+  <data name="RelatedItems" xml:space="preserve">
+    <value>Related items</value>
+  </data>
+  <data name="TakeALook" xml:space="preserve">
+    <value>Take a look</value>
+  </data>
+  <data name="UploadDataInThisWay" xml:space="preserve">
+    <value>Upload data in this way</value>
+  </data>
+  <data name="NoIndicator" xml:space="preserve">
+    <value>No indicator</value>
+  </data>
+  <data name="NoSource" xml:space="preserve">
+    <value>No source</value>
+  </data>
+  <data name="Parse" xml:space="preserve">
+    <value>Parse</value>
+  </data>
+  <data name="DataParametersFromTheSite" xml:space="preserve">
+    <value>Data parameters from the site</value>
+  </data>
+  <data name="IndicatorValuesParameters" xml:space="preserve">
+    <value>Indicator values parameters</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Kazakhstan" xml:space="preserve">
+    <value>Average Republican indicator</value>
+  </data>
+  <data name="deviation" xml:space="preserve">
+    <value>deviation</value>
+  </data>
+  <data name="IntegralMaps" xml:space="preserve">
+    <value>Integral maps</value>
+  </data>
+  <data name="DollarRate" xml:space="preserve">
+    <value>Dollar exchange rate</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="ReportGenerate" xml:space="preserve">
+    <value>Generate a report</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="ReportIndicator" xml:space="preserve">
+    <value>Report by the indicator</value>
+  </data>
+  <data name="ReportRegion" xml:space="preserve">
+    <value>Report on the region</value>
+  </data>
+  <data name="ReportYears" xml:space="preserve">
+    <value>Report by years</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DescriptionEN" xml:space="preserve">
+    <value>Description (english)</value>
+  </data>
+  <data name="DescriptionKK" xml:space="preserve">
+    <value>Description (kazakh)</value>
+  </data>
+  <data name="DescriptionRU" xml:space="preserve">
+    <value>Description (russian)</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="DateTime" xml:space="preserve">
+    <value>Date and Time</value>
+  </data>
+  <data name="Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="NewValues" xml:space="preserve">
+    <value>New values</value>
+  </data>
+  <data name="OldValues" xml:space="preserve">
+    <value>Old values</value>
+  </data>
+  <data name="Operation" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Integrals" xml:space="preserve">
+    <value>Integral</value>
+  </data>
+  <data name="Thematic" xml:space="preserve">
+    <value>Thematic</value>
+  </data>
+  <data name="BaseLayer" xml:space="preserve">
+    <value>Base layer</value>
+  </data>
+  <data name="DataLayer" xml:space="preserve">
+    <value>Data layer</value>
+  </data>
+  <data name="Legend" xml:space="preserve">
+    <value>Legend</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Keywords" xml:space="preserve">
+    <value>Keywords</value>
+  </data>
+  <data name="KeywordsEN" xml:space="preserve">
+    <value>Keywords (english)</value>
+  </data>
+  <data name="KeywordsKK" xml:space="preserve">
+    <value>Keywords (kazakh)</value>
+  </data>
+  <data name="KeywordsRU" xml:space="preserve">
+    <value>Keywords (russian)</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="NothingSelected" xml:space="preserve">
+    <value>Nothing selected</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Choose all</value>
+  </data>
+  <data name="selected" xml:space="preserve">
+    <value>is selected</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="before" xml:space="preserve">
+    <value>before</value>
+  </data>
+  <data name="from" xml:space="preserve">
+    <value>from</value>
+  </data>
+  <data name="Feedback" xml:space="preserve">
+    <value>Feedback</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+</root>

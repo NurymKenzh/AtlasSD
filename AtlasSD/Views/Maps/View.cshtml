@@ -1,0 +1,819 @@
+@model AtlasSD.Models.Map
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["View"];
+    Layout = "~/Views/Shared/_LayoutMap.cshtml";
+}
+<h3 id="mapname" style="text-align: center;">@Model.Name</h3>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-ui/jquery-ui.js"></script>
+<link href="~/css/ol.css" rel="stylesheet" />
+<script src="~/js/ol.js"></script>
+<link href="~/css/ol3-ext.css" rel="stylesheet" />
+<script src="~/js/ol3-ext.js"></script>
+<link href="~/lib/jquery-ui/themes/base/jquery-ui.css" rel="stylesheet" />
+<script src="~/lib/jquery-ui/jquery-ui.js"></script>
+<script src="~/lib/gasparesganga-jquery-loading-overlay/src/loadingoverlay.js"></script>
+<script src="~/lib/chart.js/dist/Chart.js"></script>
+
+<style>
+    .afunction {
+        cursor: pointer;
+    }
+
+    .red {
+        color: red !important;
+    }
+
+    .blue {
+        color: blue !important;
+    }
+</style>
+
+<div style="width: 100%; height: 100%; display: inline-block; padding-top: 25px;">
+    <div id="map" class="map" style="width: calc(100% - 300px); float: right;"></div>
+    <div id="sidepanel" style="width: 300px; float: right; padding-right: 5px;">
+        <h4>@SharedLocalizer["Legend"]</h4>
+        <div id="legenddiv">
+            <label id="indicatorname">
+                @Model.Indicator.Name
+            </label>
+            <table id="legendtable" class="table-condensed">
+                @for (int i = 0; i < Model.MinValues.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            <div style="height: 10px; width: 50px; border-style: solid; border-width: 1px; background-color: @Model.Colors[i]"></div>
+                        </td>
+                        <td>
+                            > @Model.MinValues[i].ToString()
+                        </td>
+                    </tr>
+                }
+            </table>
+            <h4>@SharedLocalizer["Chart"]</h4>
+            <table class="table-condensed">
+                @for (int i = 0; i < Model.IndicatorIds.Count(); i++)
+                {
+                    string chartname = "chartname" + i.ToString(),
+                        chartcolor = "chartcolor" + i.ToString();
+                    <tr>
+                        <td>
+                            <div id="@chartcolor" style="height: 10px; width: 50px; border-style: solid; border-width: 1px; background-color: @Model.IndicatorColors[i]"></div>
+                        </td>
+                        <td id="@chartname">
+                            @Model.MapIndicators[i].Indicator.Name
+                        </td>
+                    </tr>
+                }
+            </table>
+            @if (Model.IndicatorIds.Count() > 0)
+            {
+                <select id="graph" onchange="doAnimate();" class="form-control">
+                    <option value="pie">@SharedLocalizer["ChartPie"]</option>
+                    <option value="pie3D">@SharedLocalizer["ChartPie3D"]</option>
+                    <option value="donut">@SharedLocalizer["ChartDonut"]</option>
+                    <option value="bar">@SharedLocalizer["ChartBar"]</option>
+                </select>
+            }
+        </div>
+        <h4>@SharedLocalizer["BaseLayer"]</h4>
+        @Html.DropDownList("MapSources", null, htmlAttributes: new { @onchange = "ChangeMapSource(this.value)", @class = "form-control" })
+        <input id="baselayeropacity" type="range" min="0" max="100" value="100" style="max-width: 100%;" />
+        <h4>@SharedLocalizer["DataLayer"]</h4>
+        <input id="layeropacity" type="range" min="0" max="100" value="100" style="max-width: 100%;" />
+        <h4>@SharedLocalizer["Search"]</h4>
+        <input id="findbutton" type="button" value="@SharedLocalizer["Find"]" class="btn btn-default" onclick="ShowFindDialog()" />
+        <h4>@SharedLocalizer["Year"]</h4>
+        <div id="yearsdiv" style="width: 100%;">
+            <h6 id="yearcurrent"></h6>
+            <input id="year" type="range" min="@ViewBag.YearMin" max="@ViewBag.YearMax" value="@ViewBag.YearMax" style="max-width: 100%;" />
+        </div>
+        
+        <pre style="border-color: white; background-color: white;">@Model.Description</pre>
+    </div>
+</div>
+
+<div hidden="hidden">
+    <input id="stylecount" value="@Model.MinValues.Count()" />
+    @for (int i = 0; i < Model.MinValues.Count(); i++)
+    {
+        <input id="minvalue_@i" value="@Model.MinValues[i]" />
+        <input id="color_@i" value="@Model.Colors[i]" />
+    }
+    <input id="mapid" value="@ViewBag.MapId" />
+    <input id="yearmin" value="@ViewBag.YearMin" />
+    <input id="yearmax" value="@ViewBag.YearMax" />
+    <input id="maxzoom" value="@ViewBag.MaxZoom" />
+    <input id="chartcount" value="@Model.IndicatorIds.Count()"/>
+    <input id="chartcolors" value="@string.Join(",", Model.IndicatorColors)" />
+    <input id="KZ" value="@ViewBag.KZ" />
+    @*<input id="deviation" value="@SharedLocalizer["deviation"]" />*@
+</div>
+
+<div id="info" hidden="hidden">
+    <input id="regioncode" type="hidden">
+    <table id="tableinfo" class="table-condensed">
+        <tr>
+            <td>
+                @SharedLocalizer["Region"]
+            </td>
+            <td id="regionname">
+            </td>
+            <td>
+                @ViewBag.KZ (@SharedLocalizer["deviation"])
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Model.Indicator.Name
+            </td>
+            <td>
+                <a id="value" onclick="ShowIndicatorChart()" class="afunction"></a>
+            </td>
+            <td>
+                <a id="valueaverage" onclick="ShowIndicatorChart()" class="afunction"></a>
+            </td>
+        </tr>
+    </table>
+    <input id="code" type="hidden" hidden="hidden"/>
+</div>
+
+<div id="finddialog" hidden="hidden" title="@SharedLocalizer["Find"]">
+    <table id="findtable">
+        @*<tr>
+            <td>
+                @SharedLocalizer["from"]
+            </td>
+            <td>
+                -
+            </td>
+            <td>
+                @SharedLocalizer["before"]
+            </td>
+        </tr>*@
+        <tr>
+            <th>
+                @Model.Indicator.Name
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <input id="min0" type="number" class="form-control" placeholder="@SharedLocalizer["from"]" />
+            </td>
+            <td>
+                -
+            </td>
+            <td>
+                <input id="max0" type="number" class="form-control" placeholder="@SharedLocalizer["before"]" />
+            </td>
+        </tr>
+        @for (int i = 0; i < Model.IndicatorIds.Count(); i++)
+        {
+            string min = "min" + (i + 1).ToString(),
+                max = "max" + (i + 1).ToString();
+            <tr>
+                <th>
+                    @Model.MapIndicators[i].Indicator.Name
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input id="@min" type="number" class="form-control" placeholder="@SharedLocalizer["from"]" />
+                </td>
+                <td> - </td>
+                <td>
+                    <input id="@max" type="number" class="form-control" placeholder="@SharedLocalizer["before"]" />
+                </td>
+            </tr>
+        }
+    </table>
+    <input type="button" value="@SharedLocalizer["Find"]" class="btn btn-default" onclick="Find()"/>
+    <input type="button" value="@SharedLocalizer["Reset"]" class="btn btn-default" onclick="FindReset()" />
+</div>
+
+<div id="indicatorchartdialog" hidden="hidden">
+    <canvas id="indicatorchart" width="100%;" height="100%;"></canvas>
+</div>
+
+<script>
+    var layers = [];
+    var layercharts = [];
+    var layersfind = [];
+    //var layerchartsfind = [];
+    var animation = false;
+    var styleCache = {};
+    var find = false;
+    var chart = null;
+    var chartmax = 0;
+
+    var Source_baseour = new ol.source.TileWMS({
+        url: 'http://atlassd.kaznu.kz:8080/geoserver/AtlasSD/wms?',
+        params: {
+            'LAYERS': 'AtlasSD:BaseOur',
+            'VERSION': '1.1.0',
+            'FORMAT': 'image/png',
+            'TILED': true
+        },
+        serverType: 'geoserver'
+    });
+    var Layer_baseour = new ol.layer.Tile({
+        source: Source_baseour
+        });
+
+    $('#year').on('input', function () {
+        for (i = 0; i < layers.length; i++) {
+            layers[i].setVisible(false);
+            layercharts[i].setVisible(false);
+            layersfind[i].setVisible(false);
+        }
+        if (find) {
+            layersfind[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        }
+        else {
+            layers[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        }
+        layercharts[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        $('#yearcurrent').html($('#year').val());
+    });
+
+    function Style(feature, resolution) {
+        var styles = new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: 'rgba(0, 0, 0, 1.0)',
+                width: 1
+            }),
+            fill: new ol.style.Fill({
+                color: 'rgba(0, 0, 0, 0.0)'
+            })
+        });
+        for (i = 0; i < $('#stylecount').val(); i++) {
+            if (feature.get('Value') > parseFloat($('#minvalue_' + i).val())) {
+                styles = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'rgba(255, 0, 0, 1.0)',
+                        width: 1
+                    }),
+                    fill: new ol.style.Fill({
+                        color: $('#color_' + i).val()
+                    })
+                });
+            }
+        }
+        return styles;
+    };
+
+    function getFeatureStyle(feature, sel) {
+        var k = $("#graph").val() + "-" + $("#chartcolors").val() + "-" + (sel ? "1-" : "") + feature.get("data");
+        var style = styleCache[k];
+        if (!style) {
+            var radius = 20;
+            // area proportional to data size: s=PI*r^2
+            //if ($("#graph").val() != "bar") {
+            //    radius = 8 * Math.sqrt(feature.get("size") / Math.PI);
+            //}
+            //if ($("#graph").val() == "bar") {
+                if (feature.get("data").length == 1) {
+                    radius = radius * feature.get("data")[0] / chartmax;
+                }
+            //}
+            // Create chart style
+            var c = $("#chartcolors").val();
+            styleCache[k] = style = new ol.style.Style(
+                {
+                    image: new ol.style.Chart(
+                        {
+                            type: $("#graph").val(),
+                            radius: (sel ? 1.2 : 1) * radius,
+                            offsetY: $("#graph").val() == 'pie' ? 0 : (sel ? -1.2 : -1) * feature.get("radius"),
+                            data: feature.get("data") || [10, 30, 20],
+                            //colors: /,/.test(c) ? c.split(",") : c,
+                            colors: c.split(",").length == 1 ? [c, c] : c.split(","),
+                            rotateWithView: true,
+                            animation: animation,
+                            stroke: new ol.style.Stroke(
+                                {
+                                    color: $("#chartcolors").val() != "neon" ? "#fff" : "#000",
+                                    width: 2
+                                }),
+                        })
+                });
+        }
+        style.getImage().setAnimation(animation);
+        return [style];
+    }
+    
+    $("#map").LoadingOverlay("show");
+    $.ajax({
+        url: '@Url.Action("GetMap")',
+        data: { id: parseInt($('#mapid').val()) },
+        type: 'POST',
+        success: function (data) {
+            var json = [];
+            chartmax = data.chartmax;
+            for (i = 0; i < data.layers.length; i++) {
+                json[i] = jQuery.parseJSON(data.layers[i]);
+                for (j = 0; j < json[i].features.length; j++) {
+                    if (json[i].features[j].properties.CoordinatesId.toString().length > 0) {
+                        for (i2 = 0; i2 < json.length; i2++) {
+                            var found = false;
+                            for (j2 = 0; j2 < json[i2].features.length; j2++) {
+                                if (json[i2].features[j2].properties.Id.toString() == json[i].features[j].properties.CoordinatesId.toString()) {
+                                    json[i].features[j].geometry.coordinates = json[i2].features[j2].geometry.coordinates;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                found = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            for (i = 0; i < json.length; i++) {
+                var Source = new ol.source.Vector({
+                    features: (new ol.format.GeoJSON()).readFeatures(JSON.stringify(json[i]), {
+                        dataProjection: 'EPSG:3857',
+                        featureProjection: 'EPSG:3857'
+                    })
+                });
+                layers[i] = new ol.layer.Vector({
+                    source: Source,
+                    style: Style
+                });
+                layers[i].set('name', 'region');
+                layers[i].setVisible(false);
+                layersfind[i] = new ol.layer.Vector({
+                    source: new ol.source.Vector(),
+                    style: Style
+                });
+                layersfind[i].set('name', 'regionfind');
+                layersfind[i].setVisible(false);
+                map.addLayer(layers[i]);
+                map.addLayer(layersfind[i]);
+            }
+            Layer_baseour.set('name', 'baseour');
+            map.addLayer(Layer_baseour);
+            //map.getLayers().getArray()[map.getLayers().getArray().length - 1].set('name', 'baseour');
+            for (i = 0; i < layers.length; i++) {
+                var features = [];
+                var f = 0;
+                for (var j = 0; j < layers[i].getSource().getFeatures().length; j++) {
+                    var n, nb = 0, data = [];
+                    for (var k = 0; k < parseInt($('#chartcount').val()); k++) {
+                        n = layers[i].getSource().getFeatures()[j].get('Values')[k];
+                        data.push(n);
+                        nb += n;
+                    }
+                    var pext = layers[i].getSource().getFeatures()[j].getGeometry().getExtent();
+                    if (layers[i].getSource().getFeatures()[j].get('Code') != '00') {
+                        features[f] = new ol.Feature(
+                            {
+                                geometry: new ol.geom.Point([pext[0] + (pext[2] - pext[0]) / 2, pext[1] + (pext[3] - pext[1]) / 2]),
+                                data: data,
+                                size: nb
+                            });
+                        f++;
+                    }
+                }
+                layercharts[i] = new ol.layer.Vector(
+                    {
+                        source: new ol.source.Vector({ features: features }),
+                        renderOrder: ol.ordering.yOrdering(),
+                        style: function (f) { return getFeatureStyle(f); }
+                    });
+                layercharts[i].set('name', 'chart');
+                layercharts[i].setVisible(false);                
+                map.addLayer(layercharts[i]);
+            }
+            for (i = layers.length - 1; i >= 0; i--) {
+                if (layers[i].getSource().getFeatures().length > 0) {
+                    $('#year').val(parseInt($('#yearmin').val()) + i);
+                    $('#yearcurrent').html(parseInt($('#yearmin').val()) + i);
+                    layers[i].setVisible(true);
+                    layercharts[i].setVisible(true);
+                    var extent = layers[i].getSource().getExtent();
+                    map.getView().fit(extent, map.getSize());
+                    map.setView(new ol.View({
+                        center: map.getView().getCenter(),
+                        extent: map.getView().calculateExtent(map.getSize()),
+                        zoom: map.getView().getZoom(),
+                        minZoom: map.getView().getZoom(),
+                        maxZoom: $('#maxzoom').val()
+                    }));
+                    break;
+                }
+            }
+            doAnimate();
+            $("#map").LoadingOverlay("hide");
+        },
+        error: function () {
+            $("#map").LoadingOverlay("hide");
+        }
+    });
+
+    var Layer_Base = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    var map = new ol.Map({
+        controls: ol.control.defaults().extend([
+            new ol.control.ScaleLine()
+        ]),
+        layers: [
+            Layer_Base
+        ],
+        target: 'map',
+        view: new ol.View({
+            center: [0, 0],
+            zoom: 2
+        })
+    });
+
+    map.on('click', function (event) {
+        map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
+            if (layer.get('name') == 'region' || layer.get('name') == 'regionfind') {
+                var kz = 0;
+                var kzi = [];
+                for (i = 0; i < layer.getSource().getFeatures().length; i++) {
+                    if (layer.getSource().getFeatures()[i].get('Code') == '00') {
+                        kz = layer.getSource().getFeatures()[i].get('Value');
+                        kzi = layer.getSource().getFeatures()[i].get('Values');
+                    }
+                }
+                $('#regionname').html(feature.get('Name'));
+                $('#regioncode').val(feature.get('Code'));
+                $('#value').html(feature.get('Value'));
+                $('#valueaverage').html((feature.get('Value') - kz));
+                if ((feature.get('Value') - kz < 0)) {
+                    $('#valueaverage').removeClass('blue');
+                    $('#valueaverage').addClass('red');
+                }
+                else {
+                    $('#valueaverage').removeClass('red');
+                    $('#valueaverage').addClass('blue');
+                }
+                if ($('#chartcount').val() > 0) {
+                    for (i = 0; i < $('#chartcount').val(); i++) {
+                        $('#chartinfo' + i).remove();
+                    }
+                    for (i = 0; i < $('#chartcount').val(); i++) {
+                        if ((feature.get('Values')[i] - kz < 0)){
+                            $('#tableinfo tr:last').after('<tr id="chartinfo' + i + '"><td>' + $('#chartname' + i).html() + '</td><td><a id="value" onclick="ShowIndicatorsChart()" class="afunction">' + feature.get('Values')[i] + '</a></td><td><a id="valueaverage" onclick="ShowIndicatorsChart()" class="afunction red">' + (feature.get('Values')[i] - kz) + '</a></tr>');
+                        }
+                        else {
+                            $('#tableinfo tr:last').after('<tr id="chartinfo' + i + '"><td>' + $('#chartname' + i).html() + '</td><td><a id="value" onclick="ShowIndicatorsChart()" class="afunction">' + feature.get('Values')[i] + '</a></td><td><a id="valueaverage" onclick="ShowIndicatorsChart()" class="afunction blue">' + (feature.get('Values')[i] - kz) + '</a></tr>');
+                        }
+                    }
+                }
+                $('#code').val(feature.get('Code'));
+                $('#info').dialog({
+                    width: 500,
+                    resize: myResize
+                });
+            }
+        });
+    });
+
+    var listenerKey;
+    function doAnimate() {
+        if (listenerKey) return;
+        var start = new Date().getTime();
+        var duration = 1000;
+        animation = 0;
+        listenerKey = layercharts[$('#year').val() - $('#yearmin').val()].on('precompose', function (event) {
+            var frameState = event.frameState;
+            var elapsed = frameState.time - start;
+            if (elapsed > duration) {
+                ol.Observable.unByKey(listenerKey);
+                listenerKey = null;
+                animation = false;
+            }
+            else {
+                animation = ol.easing.easeOut(elapsed / duration);
+                frameState.animate = true;
+            }
+            layercharts[$('#year').val() - $('#yearmin').val()].changed();
+        });
+        // Force redraw
+        for (i = 0; i < layercharts.length; i++) {
+            layercharts[i].changed();
+        }
+        //map.renderSync();
+    }
+
+    // смена базового слоя
+    function ChangeMapSource(val) {
+        if (val == 'OpenStreetMap') {
+            Layer_Base.setSource(new ol.source.OSM());
+        }
+        if (val == 'Stamen') {
+            Layer_Base.setSource(new ol.source.Stamen({ layer: 'watercolor' }));
+        }
+        if (val == 'ArcGIS') {
+            var attribution = new ol.Attribution({
+                html: 'Tiles © <a href="http://services.arcgisonline.com/ArcGIS/' +
+                'rest/services/World_Topo_Map/MapServer">ArcGIS</a>'
+            });
+            var Source = new ol.source.XYZ({
+                attributions: [attribution],
+                url: 'http://server.arcgisonline.com/ArcGIS/rest/services/' +
+                'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+            });
+            Layer_Base.setSource(Source);
+        }
+        if (val == 'Bing') {
+            var Source = new ol.source.BingMaps({
+                key: 'Aq0o8JJEyrcLy1GaN4vvv5DfrzE87lo_i_0vCY55v6pJ0948hLS5vsP6zdmp-qyg',
+                imagerySet: 'Road'
+            });
+            Layer_Base.setSource(Source);
+        }
+        if (val == 'BingAerial') {
+            var Source = new ol.source.BingMaps({
+                key: 'Aq0o8JJEyrcLy1GaN4vvv5DfrzE87lo_i_0vCY55v6pJ0948hLS5vsP6zdmp-qyg',
+                imagerySet: 'AerialWithLabels'
+            });
+            Layer_Base.setSource(Source);
+        }
+    };
+
+    $('#layeropacity').on('input', function () {
+        for (i= 0; i < layers.length;i++){
+            layers[i].setOpacity($('#layeropacity').val() / 100);
+            layersfind[i].setOpacity($('#layeropacity').val() / 100);
+            layercharts[i].setOpacity($('#layeropacity').val() / 100);
+        }   
+    });
+
+    $('#baselayeropacity').on('input', function () {
+        Layer_Base.setOpacity($('#baselayeropacity').val() / 100);
+        Layer_baseour.setOpacity($('#baselayeropacity').val() / 100);
+    });
+
+    function ShowFindDialog() {
+        $("#finddialog").dialog({ resize: myResize });
+    };
+
+    function myResize(event, ui) {
+        var heightPadding = parseInt($(this).css('padding-top'), 0) + parseInt($(this).css('padding-bottom'), 0),
+            widthPadding = parseInt($(this).css('padding-left'), 0) + parseInt($(this).css('padding-right'), 0),
+            titlebarMargin = parseInt($(this).prev('.ui-dialog-titlebar').css('margin-bottom'), 0);
+        $(this).height($(this).parent().height() - $(this).prev('.ui-dialog-titlebar').outerHeight(true) - heightPadding - titlebarMargin);
+        $(this).width($(this).prev('.ui-dialog-titlebar').outerWidth(true) - widthPadding);
+    }
+
+    function Find() {
+        //map.removeLayer(map.getLayers().getArray()[map.getLayers().getArray().length - 1]);
+        for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
+            if (map.getLayers().getArray()[l].get('name') == 'chart') {
+                map.removeLayer(map.getLayers().getArray()[l]);
+            }
+        }
+        //for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
+        //    if (map.getLayers().getArray()[l].get('name') == 'baseour') {
+        //        map.removeLayer(map.getLayers().getArray()[l]);
+        //    }
+        //}
+        for (l = 0; l < layersfind.length; l++) {
+            var features = layers[l].getSource().getFeatures();
+            var featurecharts = layercharts[l].getSource().getFeatures();
+            for (j = 0; j < features.length; j++) {
+                if (features[j].get('Code') != '00') {
+                    //if (features[j].get('Value') > 500) {
+                    //    var clone = features[j].clone();
+                    //    layersfind[l].getSource().addFeatures([clone]);
+                    //}
+                    var add = true;
+                    if ($("#min0").val()) {
+                        if (features[j].get('Value') < $("#min0").val()) {
+                            add = false;
+                        }
+                    }
+                    if ($("#max0").val()) {
+                        if (features[j].get('Value') > $("#max0").val()) {
+                            add = false;
+                        }
+                    }
+                    for (var k = 0; k < parseInt($('#chartcount').val()); k++) {
+                        if ($("#min" + (k + 1).toString()).val()) {
+                            if (features[j].get('Values')[k] < $("#min" + (k + 1).toString()).val()) {
+                                add = false;
+                            }
+                        }
+                        if ($("#max" + (k + 1).toString()).val()) {
+                            if (features[j].get('Values')[k] > $("#max" + (k + 1).toString()).val()) {
+                                add = false;
+                            }
+                        }
+                    }
+                    if (add) {
+                        var clone = features[j].clone();
+                        layersfind[l].getSource().addFeatures([clone]);
+                    }
+                }
+            }
+            var featuresfind = [];
+            for (var j = 0; j < layersfind[l].getSource().getFeatures().length; j++) {
+                var n, nb = 0, data = [];
+                for (var k = 0; k < parseInt($('#chartcount').val()); k++) {
+                    n = layersfind[l].getSource().getFeatures()[j].get('Values')[k];
+                    data.push(n);
+                    nb += n;
+                }
+                var pext = layersfind[l].getSource().getFeatures()[j].getGeometry().getExtent();
+                featuresfind[j] = new ol.Feature(
+                    {
+                        geometry: new ol.geom.Point([pext[0] + (pext[2] - pext[0]) / 2, pext[1] + (pext[3] - pext[1]) / 2]),
+                        data: data,
+                        size: nb
+                    });
+            }
+            layercharts[l] = new ol.layer.Vector(
+                {
+                    source: new ol.source.Vector({ features: featuresfind }),
+                    renderOrder: ol.ordering.yOrdering(),
+                    style: function (f) { return getFeatureStyle(f); }
+                });
+
+            layers[l].setVisible(false);
+            layercharts[l].setVisible(false);
+        }
+        //Layer_baseour.set('name', 'baseour');
+        //map.addLayer(Layer_baseour);
+        for (l = 0; l < layercharts.length; l++) {
+            layercharts[l].set('name', 'chart');
+            map.addLayer(layercharts[l]);
+        }
+        layercharts[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        layersfind[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        find = true;
+    };
+
+    function FindReset() {
+        //map.removeLayer(map.getLayers().getArray()[map.getLayers().getArray().length - 1]);
+        for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
+            if (map.getLayers().getArray()[l].get('name') == 'chart') {
+                map.removeLayer(map.getLayers().getArray()[l]);
+            }
+        }
+        //Layer_baseour.set('name', 'baseour');
+        //map.addLayer(Layer_baseour);
+        for (i = 0; i < layers.length; i++) {
+            var features = [];
+            var f = 0;
+            for (var j = 0; j < layers[i].getSource().getFeatures().length; j++) {
+                if (layers[i].getSource().getFeatures()[j].get('Code') != '00') {
+                    var n, nb = 0, data = [];
+                    for (var k = 0; k < parseInt($('#chartcount').val()); k++) {
+                        n = layers[i].getSource().getFeatures()[j].get('Values')[k];
+                        data.push(n);
+                        nb += n;
+                    }
+                    var pext = layers[i].getSource().getFeatures()[j].getGeometry().getExtent();
+                    features[f] = new ol.Feature(
+                        {
+                            geometry: new ol.geom.Point([pext[0] + (pext[2] - pext[0]) / 2, pext[1] + (pext[3] - pext[1]) / 2]),
+                            data: data,
+                            size: nb
+                        });
+                    f++;
+                }
+            }
+            layercharts[i] = new ol.layer.Vector(
+                {
+                    source: new ol.source.Vector({ features: features }),
+                    renderOrder: ol.ordering.yOrdering(),
+                    style: function (s) { return getFeatureStyle(s); }
+                });
+            layercharts[i].set('name', 'chart');
+            layercharts[i].setVisible(false);
+            map.addLayer(layercharts[i]);
+        }
+        layercharts[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        layers[$('#year').val() - $('#yearmin').val()].setVisible(true);
+        find = false;
+    };
+
+    function ShowIndicatorChart() {
+        var ctx = document.getElementById("indicatorchart").getContext('2d');
+        var labels = [];
+        var indicatorvalues = [];
+        var kzvalues = [];
+        for (i = $('#yearmin').val(); i <= $('#yearmax').val(); i++) {
+            labels.push(i.toString());
+            indicatorvalues.push(0);
+            kzvalues.push(0);
+            for (j = 0; j < layers[i - $('#yearmin').val()].getSource().getFeatures().length; j++) {
+                if (layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Code') == $('#regioncode').val()) {
+                    indicatorvalues[i - $('#yearmin').val()] = layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Value');
+                    break;
+                }
+            }
+            for (j = 0; j < layers[i - $('#yearmin').val()].getSource().getFeatures().length; j++) {
+                if (layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Code') == '00') {
+                    kzvalues[i - $('#yearmin').val()] = layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Value');
+                    break;
+                }
+            }
+        }
+        if (chart != null) {
+            chart.destroy();
+        }
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: $('#indicatorname').html(),
+                    data: indicatorvalues,
+                    backgroundColor: 'rgba(255, 0, 0, 1)',
+                    borderWidth: 1
+                }, {
+                    label: $('#KZ').val(),
+                    data: kzvalues,
+                    backgroundColor: 'rgba(0, 255, 0, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        $('#indicatorchartdialog').dialog({
+            resize: myResize,
+            minHeight: 300,
+            minWidth: 200
+        });
+        return false;
+    };
+
+    function ShowIndicatorsChart() {
+        var ctx = document.getElementById("indicatorchart").getContext('2d');
+        var labels = [];
+        for (i = $('#yearmin').val(); i <= $('#yearmax').val(); i++) {
+            labels.push(i.toString());
+        }
+        var datasets = [];
+        for (var k = 0; k < parseInt($('#chartcount').val()); k++){
+            var indicatorvalues = [];
+            for (i = $('#yearmin').val(); i <= $('#yearmax').val(); i++) {
+                indicatorvalues.push(0);
+                for (j = 0; j < layers[i - $('#yearmin').val()].getSource().getFeatures().length; j++) {
+                    if (layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Code') == $('#regioncode').val()) {
+                        indicatorvalues[i - $('#yearmin').val()] = layers[i - $('#yearmin').val()].getSource().getFeatures()[j].get('Values')[k];
+                        break;
+                    }
+                }
+            }
+            var dataset = {
+                label: $('#chartname' + k.toString()).html(),
+                data: indicatorvalues,
+                backgroundColor: $('#chartcolor' + k.toString()).css('backgroundColor'),
+                borderWidth: 1
+            };
+            datasets.push(dataset);
+        }
+        if (chart != null) {
+            chart.destroy();
+        }
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        $('#indicatorchartdialog').dialog({
+            resize: myResize,
+            minHeight: 300,
+            minWidth: 200
+        });
+        return false;
+    };
+</script>

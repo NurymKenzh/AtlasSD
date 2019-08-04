@@ -1,0 +1,69 @@
+@model AtlasSD.Models.IndicatorValue
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Details"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Details"]</h2>
+
+<div>
+    <h4>@SharedLocalizer["IndicatorValue"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Source)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Source.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group.Bloc)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Bloc.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Region)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Region.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Value)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Value)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a id="backlink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        $('#backlink').prop("href", document.referrer);
+    });
+</script>

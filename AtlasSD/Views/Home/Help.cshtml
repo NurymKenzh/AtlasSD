@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using Microsoft.AspNetCore.Localization
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = Localizer["Help"];
+}
+<h2>@ViewData["Title"].</h2>
+
+
+@{
+    var user = Context.User;
+    bool editable = false;
+}
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator") || user.IsInRole("Moderator"))
+    {
+        editable = true;
+    }
+}
+@{
+    string[] help = ViewBag.Help;
+    if (editable)
+    {
+        <input id="editbutton" type="button" value="@SharedLocalizer["Edit"]" onclick="Edit()" class="btn btn-default" />
+        <form id="helpform" asp-action="Help" hidden="hidden">
+            <textarea name="HelpText" cols="150" rows="20" class="form-control" style="max-width: 1200px;">
+                @foreach (string h in help)
+                {
+                    @h;
+                    <text>&#10;</text>
+                }
+            </textarea>
+            <input type="submit" value="@SharedLocalizer["Save"]" class="btn btn-default" />
+        </form>
+    }
+    foreach (string h in help)
+    {
+        <div id="helpdiv" style="text-align: justify;">
+            <p>
+                @h
+            </p>
+        </div>
+    }
+}
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var Language = requestCulture.RequestCulture.Culture.Name;
+    @if (Language == "en")
+    {
+        <iframe width="1120" height="630" src="https://www.youtube.com/embed/2Hq1Ejw7b7M" frameborder="0" allowfullscreen></iframe>
+    }
+    else if (Language == "kk")
+    {
+        <iframe width="1120" height="630" src="https://www.youtube.com/embed/u9YjFh7wLh0" frameborder="0" allowfullscreen></iframe>
+    }
+    else if (Language == "ru")
+    {
+        <iframe width="1120" height="630" src="https://www.youtube.com/embed/u9YjFh7wLh0" frameborder="0" allowfullscreen></iframe>
+    }
+    else
+    {
+        <iframe width="1120" height="630" src="https://www.youtube.com/embed/u9YjFh7wLh0" frameborder="0" allowfullscreen></iframe>
+    }
+}
+
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator") || user.IsInRole("Moderator"))
+    {
+        @if (Language == "en")
+        {
+            <iframe width="1120" height="630" src="https://www.youtube.com/embed/2DHpS2jeYwY" frameborder="0" allowfullscreen></iframe>
+        }
+        else if (Language == "kk")
+        {
+            <iframe width="1120" height="630" src="https://www.youtube.com/embed/fzJnxc7Q4sk" frameborder="0" allowfullscreen></iframe>
+        }
+        else if (Language == "ru")
+        {
+            <iframe width="1120" height="630" src="https://www.youtube.com/embed/fzJnxc7Q4sk" frameborder="0" allowfullscreen></iframe>
+        }
+        else
+        {
+            <iframe width="1120" height="630" src="https://www.youtube.com/embed/fzJnxc7Q4sk" frameborder="0" allowfullscreen></iframe>
+        }
+    }
+}
+
+
+<script>
+    function Edit() {
+        $('#helpform').show();
+    };
+</script>

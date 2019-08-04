@@ -1,0 +1,99 @@
+@model AtlasSD.Models.ReferencePoint
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Delete"]</h2>
+
+<h3>@SharedLocalizer["Delete"]?</h3>
+<div>
+    <h4>@SharedLocalizer["ReferencePoint"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="Id" />
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group.Bloc)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Bloc.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Min)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Min)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Max)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Max)
+        </dd>
+        <dt>
+            @SharedLocalizer["RelatedItems"]
+        </dt>
+        <dd>
+            <table class="table red">
+                @if (((IQueryable<Indicator>)ViewBag.Indicators).Count() > 0)
+                {
+
+                    <tr>
+                        <th>
+                            @SharedLocalizer["Indicators"]
+                        </th>
+                    </tr>
+                    @foreach (var indicator in (IQueryable<Indicator>)ViewBag.Indicators)
+                {
+                        <tr>
+                            <td>
+                                @indicator.NameCode
+                            </td>
+                            <td>
+                                <a asp-controller="Indicators" asp-action="Delete" asp-route-id="@indicator.Id">@SharedLocalizer["Delete"]</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+
+        </dd>
+
+    </dl>
+    
+    <form asp-action="Delete">
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-actions no-color">
+            <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-default" /> |
+            <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+    });
+</script>

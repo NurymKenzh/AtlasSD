@@ -1,0 +1,58 @@
+@model AtlasSD.Models.ReferencePoint
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Details"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Details"]</h2>
+
+<div>
+    <h4>@SharedLocalizer["ReferencePoint"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group.Bloc)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Bloc.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Min)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Min)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Max)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Max)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SharedLocalizer["Edit"]</a> |
+    <a id="backlink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        $('#backlink').prop("href", document.referrer);
+    });
+</script>

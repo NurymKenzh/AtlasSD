@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using AtlasSD.Controllers
+@using Microsoft.AspNetCore.Builder;
+@inject IViewLocalizer Localizer
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = Localizer["Contact"];
+}
+<h2>@ViewData["Title"].</h2>
+@*<h3>Text</h3>*@
+
+<div style="text-align: justify;">
+    @{
+        if (new RequestLocalizationOptions().DefaultRequestCulture.Culture.Name == "en")
+        {
+            <p>Address: Republic of Kazakhstan, 050038, Almaty, Al-Farabi avenue 71/16, administrative building No. 2. Scientific and technological park. KazNU Al-Farabi</p>
+            <p>Phone: +7 727 377 32 83, +7 727 377 31 88</p>
+            <p>E-mail: ntpkaznu@gmail.com</p>
+        }
+        else if (new RequestLocalizationOptions().DefaultRequestCulture.Culture.Name == "kk")
+        {
+            <p>Мекен-жай: Қазақстан Республикасы, 050038, Алматы қаласы, Әл-Фараби атындағы 71/16, әкімшілік іс 2. «технопаркі» Қазақ ұлттық университеті Әл-Фараби атындағы</p>
+            <p>Телефон: +7 727 377 32 83, +7 727 377 31 88</p>
+            <p>Электрондық пошта: ntpkaznu@gmail.com</p>
+        }
+        else
+        {
+            <p>Адрес: Республика Казахстан, 050038, г. Алматы, пр. аль-Фараби 71/16, административный корпус № 2. «Научно-технологический парк». КазНУ им. аль-Фараби</p>
+            <p>Телефон:    +7 727 377 32 83,  +7 727 377 31 88</p>
+            <p>E-mail:    ntpkaznu@gmail.com</p>
+        }
+    }
+</div>
+
+<div>
+    <iframe width="1150" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://www.openstreetmap.org/export/embed.html?bbox=76.9102191925049%2C43.21919604200567%2C76.92813634872438%2C43.22637302444049&amp;layer=mapnik&amp;marker=43.22278463883471%2C76.91917777061462" style="border: 1px solid black"></iframe>
+</div>
+
+<div>
+    <a asp-action="Create" asp-controller="Feedbacks" >@SharedLocalizer["Feedback"]</a>
+</div>
+
+@*<address>
+    One Microsoft Way<br />
+    Redmond, WA 98052-6399<br />
+    <abbr title="Phone">P:</abbr>
+    425.555.0100
+</address>
+
+<address>
+    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
+    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+</address>*@

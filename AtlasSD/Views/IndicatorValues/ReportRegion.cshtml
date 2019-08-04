@@ -1,0 +1,183 @@
+@*@model AtlasSD.Models.IndicatorValueViewModel*@
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["ReportRegion"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["ReportRegion"]</h2>
+
+<form asp-action="ReportRegion">
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <h4>
+            @SharedLocalizer["Error"]: @ViewBag.Error
+        </h4>
+        <br />
+    }
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["ReportGenerate"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Bloc"] 1</label>
+            <div class="col-md-10">
+                @Html.DropDownList("BlocId1", (IEnumerable<SelectListItem>)ViewBag.BlocId, htmlAttributes: new { @id = "BlocId1", @class = "form-control", @onchange = "ChangeBloc(1)" })
+                @*<span asp-validation-for="BlocId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Group"] 1</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GroupId1", (IEnumerable<SelectListItem>)ViewBag.GroupId, htmlAttributes: new { @id = "GroupId1", @class = "form-control", @onchange = "ChangeGroup(1)" })
+                @*<span asp-validation-for="GroupId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Indicator"] 1</label>
+            <div class="col-md-10">
+                @Html.DropDownList("IndicatorId1", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, htmlAttributes: new { @id = "IndicatorId1", @class = "form-control" })
+                @*<span asp-validation-for="IndicatorId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Bloc"] 2</label>
+            <div class="col-md-10">
+                @Html.DropDownList("BlocId2", (IEnumerable<SelectListItem>)ViewBag.BlocId, htmlAttributes: new { @id = "BlocId2", @class = "form-control", @onchange = "ChangeBloc(2)" })
+                @*<span asp-validation-for="BlocId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Group"] 2</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GroupId2", (IEnumerable<SelectListItem>)ViewBag.GroupId, htmlAttributes: new { @id = "GroupId2", @class = "form-control", @onchange = "ChangeGroup(2)" })
+                @*<span asp-validation-for="GroupId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Indicator"] 2</label>
+            <div class="col-md-10">
+                @Html.DropDownList("IndicatorId2", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, htmlAttributes: new { @id = "IndicatorId2", @class = "form-control" })
+                @*<span asp-validation-for="IndicatorId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Bloc"] 3</label>
+            <div class="col-md-10">
+                @Html.DropDownList("BlocId3", (IEnumerable<SelectListItem>)ViewBag.BlocId, htmlAttributes: new { @id = "BlocId3", @class = "form-control", @onchange = "ChangeBloc(3)" })
+                @*<span asp-validation-for="BlocId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Group"] 3</label>
+            <div class="col-md-10">
+                @Html.DropDownList("GroupId3", (IEnumerable<SelectListItem>)ViewBag.GroupId, htmlAttributes: new { @id = "GroupId3", @class = "form-control", @onchange = "ChangeGroup(3)" })
+                @*<span asp-validation-for="GroupId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Indicator"] 3</label>
+            <div class="col-md-10">
+                @Html.DropDownList("IndicatorId3", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, htmlAttributes: new { @id = "IndicatorId3", @class = "form-control" })
+                @*<span asp-validation-for="IndicatorId" class="text-danger"></span>*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Region"]</label>
+            <div class="col-md-10">
+                @Html.DropDownList("RegionCode", (IEnumerable<SelectListItem>)ViewBag.RegionCode, htmlAttributes: new { @id = "RegionCode", @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Year"] 1</label>
+            <div class="col-md-10">
+                @Html.DropDownList("Year1", (IEnumerable<SelectListItem>)ViewBag.Year, "", htmlAttributes: new { @id = "Year1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Year"] 2</label>
+            <div class="col-md-10">
+                @Html.DropDownList("Year2", (IEnumerable<SelectListItem>)ViewBag.Year, "", htmlAttributes: new { @id = "Year2", @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["Year"] 3</label>
+            <div class="col-md-10">
+                @Html.DropDownList("Year3", (IEnumerable<SelectListItem>)ViewBag.Year, "", htmlAttributes: new { @id = "Year3", @class = "form-control" })
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div id="Create" class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Download"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function ChangeBloc(n) {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId' + n.toString()).val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId' + n.toString()).val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#GroupId" + n.toString()).empty();
+                $('#GroupId' + n.toString()).append(optionhtml);
+                ChangeGroup(n);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup(n) {
+        $.ajax({
+            url: '@Url.Action("GetRegularIndicatorByGroup")',
+            data: { GroupId: $('#GroupId' + n.toString()).val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    var selected = '';
+                    if (i == 0) {
+                        selected = 'selected';
+                    }
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId' + n.toString()).val() ? 'selected' : selected) +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#IndicatorId" + n.toString()).empty();
+                $('#IndicatorId' + n.toString()).append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+        ChangeBloc(1);
+        ChangeBloc(2);
+        ChangeBloc(3);
+    });
+</script>

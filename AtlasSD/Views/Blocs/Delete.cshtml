@@ -1,0 +1,98 @@
+@model AtlasSD.Models.Bloc
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Delete"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Delete"]</h2>
+
+<h3>@SharedLocalizer["Delete"]?</h3>
+<div>
+    <h4>@SharedLocalizer["Bloc"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="Id" />
+        <dt>
+            @Html.DisplayNameFor(model => model.Code)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Code)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameEN)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameEN)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameKK)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameKK)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameRU)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameRU)
+        </dd>
+        <dt>
+            @SharedLocalizer["RelatedItems"]
+        </dt>
+        <dd>
+            @if (((IQueryable<Group>)ViewBag.Groups).Count() > 0)
+            {
+                <table class="table red">
+                <tr>
+                    <th>
+                        @SharedLocalizer["Groups"]
+                    </th>
+                </tr>
+                @foreach (var group in (IQueryable<Group>)ViewBag.Groups)
+                {
+                    <tr>
+                        <td>
+                            @group.NameCode
+                        </td>
+                        <td>
+                            <a asp-controller="Groups" asp-action="Delete" asp-route-id="@group.Id">@SharedLocalizer["Delete"]</a>
+                        </td>
+                    </tr>
+                }
+                </table>
+            }
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-actions no-color">
+            @if (((IQueryable<Group>)ViewBag.Groups).Count() == 0)
+            {
+                <input type="submit" value="@SharedLocalizer["Delete"]" class="btn btn-default" />
+            }
+            else
+            {
+                <input type="submit" value="@SharedLocalizer["Delete"]" disabled="disabled" class="btn btn-default" />
+            }
+            | <a id="backlink" asp-action="Index" >@SharedLocalizer["BackToList"]</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else if (document.referrer.indexOf("Bloc") >= 0) {
+            $('#backlinktext').val(document.referrer);
+        }
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", $('#backlinktext').val());
+        }
+    });
+</script>

@@ -1,0 +1,203 @@
+@model AtlasSD.Models.Map
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Details"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Details"]</h2>
+
+<div>
+    <h4>@SharedLocalizer["Map"]</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NameEN)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameEN)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameKK)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameKK)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NameRU)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NameRU)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionEN)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.DescriptionEN)*@
+            @*@Html.Raw("<pre>" + Html.Encode(Model.DescriptionEN) + "</pre>");*@
+            <pre style="border-color: white; background-color: white;">@Model.DescriptionEN</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionKK)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.DescriptionKK)*@
+            <pre style="border-color: white; background-color: white;">@Model.DescriptionKK</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DescriptionRU)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.DescriptionRU)*@
+            <pre style="border-color: white; background-color: white;">@Model.DescriptionRU</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.KeywordsEN)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.KeywordsEN)*@
+            @*@Html.Raw("<pre>" + Html.Encode(Model.KeywordsEN) + "</pre>");*@
+            <pre style="border-color: white; background-color: white;">@Model.KeywordsEN</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.KeywordsKK)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.KeywordsKK)*@
+            <pre style="border-color: white; background-color: white;">@Model.KeywordsKK</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.KeywordsRU)
+        </dt>
+        <dd>
+            @*@Html.DisplayFor(model => model.KeywordsRU)*@
+            <pre style="border-color: white; background-color: white;">@Model.KeywordsRU</pre>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group.Bloc)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Bloc.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator.Group)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Group.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Indicator)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Indicator.Name)
+        </dd>
+        <dt>
+            @SharedLocalizer["Style"]
+        </dt>
+        <dd>
+            <table id="Colors" class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <label asp-for="Colors"></label>
+                        </th>
+                        <th>
+                            <label id="minvalue" asp-for="MinValues"></label>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.MapIntervals.Count(); i++)
+                    {
+                        string Color = "Color" + i.ToString(),
+                            Value = "ValueInput" + i.ToString(),
+                            inputid = "ColorInput" + i.ToString();
+                        <tr id="@Color">
+                            <td>
+                                <div style="height: 20px; width: 40px; border-width: 1px; border-style: solid; background-color: @Model.MapIntervals[i].Color;"></div>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.MapIntervals[i].MinValue)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </dd>
+        <dt>
+            @SharedLocalizer["Chart"]
+        </dt>
+        <dd>
+            <table id="Colors" class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <label asp-for="Colors"></label>
+                        </th>
+                        <th>
+                            <label>@SharedLocalizer["Bloc"]</label>
+                        </th>
+                        <th>
+                            <label>@SharedLocalizer["Group"]</label>
+                        </th>
+                        <th>
+                            <label>@SharedLocalizer["Indicator"]</label>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        if (Model.MapIndicators != null)
+                        {
+                            @for (int i = 0; i < Model.MapIndicators.Count(); i++)
+                            {
+                                string Indicator = "Indicator" + i.ToString(),
+                                    IndicatorColorInput = "IndicatorColorInput" + i.ToString(),
+                                    IndicatorId = "IndicatorId" + i.ToString(),
+                                    BlocId = "BlocId" + i.ToString(),
+                                    GroupId = "GroupId" + i.ToString(),
+                                    IndicatorIdInput = "IndicatorIdInput" + i.ToString();
+                                <tr id="@Indicator">
+                                    <td>
+                                        <div style="height: 20px; width: 40px; border-width: 1px; border-style: solid; background-color: @Model.MapIndicators[i].Color;"></div>
+                                    </td>
+                                    <td>
+                                        @*<select id="@BlocId" name="MapIndicators[@i].BlocId" class="form-control" asp-items="ViewBag.IndicatorsBlocId[@i]" onchange="ChangeIndicatorBloc(@i)"></select>*@
+                                        @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Group.Bloc.Name)
+                                    </td>
+                                    <td>
+                                        @*<select id="@GroupId" name="MapIndicators[@i].GroupId" class="form-control" asp-items="ViewBag.IndicatorsGroupId[@i]" onchange="ChangeIndicatorGroup(@i)"></select>*@
+                                        @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Group.Name)
+                                    </td>
+                                    <td>
+                                        @*<input id="@IndicatorIdInput" type="hidden" name="MapIndicators[@i].IndicatorId" value="@Model.MapIndicators[i].IndicatorId" class="form-control" />
+                                        <select id="@IndicatorId" class="form-control" asp-items="ViewBag.IndicatorsIndicatorId[@i]" onchange="ChangeIndicatorIndicator(@i)"></select>
+                                        @Html.ValidationMessageFor(model => model.MapIndicators[i].IndicatorId, "", new { @class = "text-danger" })*@
+                                        @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Name)
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SharedLocalizer["Edit"]</a> |
+    <a id="backlink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        $('#backlink').prop("href", document.referrer);
+    });
+</script>

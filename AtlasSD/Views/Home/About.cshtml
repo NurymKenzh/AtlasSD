@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Builder;
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["About"];
+}
+<h2>@ViewData["Title"].</h2>
+@*<h3>Text</h3>
+
+<p>Text</p>*@
+<div style="text-align: justify;">
+    @{
+        if (new RequestLocalizationOptions().DefaultRequestCulture.Culture.Name == "en")
+        {
+            <p><b>Title of the project: </b>«Elaboration and creation of electronic atlas of socio-demographic development of the Republic of Kazakhstan’s regions using the technology of GIS and information security».</p>
+            <p>The problem of common people social well - being should be a key indicator of promotion the republic to the main aim noted in the Address of the President of the Republic of Kazakhstan  N.Nazarbayev to the nation of Kazakhstan «Kazakhstan's way - 2050: common aim, common interests, common future» [1].</p>
+            <p>Carrying out social modernization in Kazakhstan aims to improving the population life quality. An important part of social modernization is an effective system of state management of social processes.In this regard the creation of socio - demographic atlas of the regions of Kazakhstan could provide the regions of the republic by complex proposals and recommendations to improve the population life quality and the socio - economic state of the regions.</p>
+            <p><b>Project purpose: </b>to develop and create the electronic atlas of socio - demographic development based on complex cartographic characteristics of social and demographic indicators of the human development of the Republic of Kazakhstan using GIS technology.</p>
+        }
+        else if (new RequestLocalizationOptions().DefaultRequestCulture.Culture.Name == "kk")
+        {
+            <p><b>Жоба тақырыбының атауы. </b>«Қазақстан Республикасы аймақтары әлеуметтік-демографиялық дамуының электрондық атласын ГАЖ технологиялары мен ақпаратты қорғауды пайдалану негізінде өңдеу және құрастыру»</p>
+            <p>Қазақстан Республикасының Президенті Н.Назарбаевтың «Қазақстан жолы – 2050: бір мақсат, бір мүдде, бір болашақ» Жолдауында қарапайым адамдардың әлеуметтік көңіл - күйі біздің басты мақсатқа ілгерілеуіміздің маңызды индикаторы болуға тиіс екенін атап көрсетті.</p>
+            <p>Қазақстанда жүргізілген әлеуметтік жаңғырту халықтың өмір сүру сапасын көтеруге бағытталған. Әлеуметтік жаңғыртудың маңызды бөлігі әлеуметтік үдерістерді мемлекеттік басқарудың тиімді жүйесі болып саналады. Осыған сәйкес, Қазақстан аймақтарының әлеуметтік-демографиялық атласын құру халықтың өмір сүру сапасын көтеру және аймақтардың әлеуметтік-экономикалық келбетін жақсарту бойынша кешенді ұсыныстарды қамтамасыз етер еді.</p>
+            <p><b>Мақсаты: </b>ГАЖ технологиялары мен ақпаратты қорғауды пайдалану арқылы Қазақстан Республикасындағы адам дамуының әлеуметтік және демографиялық көрсеткіштерінің кешенді картографиялық сипаттамасы негізінде әлеуметтік-демографиялық дамудың электронды атласын өңдеу және құрастыру.</p>
+        }
+        else
+        {
+            <p><b>Наименование темы проекта: </b>«Разработка и создание электронного атласа социально-демографического развития регионов Республики Казахстан с использованием технологии ГИС  и защиты информации».</p>
+            <p>В Послании Президента Республики Казахстан Н.Назарбаева народу Казахстана «Казахстанский путь – 2050: Единая цель, единые интересы, единое будущее» было отмечено, что социальное самочувствие простых людей должно быть важнейшим индикатором продвижения республики к главной цели.</p>
+            <p>Проводимая социальная модернизация в Казахстане  направлена на повышение качества жизни населения. Важной частью социальной модернизации является эффективная система государственного управления социальными процессами. В этом плане, создание социально-демографического атласа регионов Казахстана могло бы обеспечить регионы республики комплексными предложениями и рекомендациями по  повышению качества жизни населения и улучшения социально-экономических портретов регионов.</p>
+            <p><b>Цель: </b>Цель: Разработать и создать электронный атлас социально-демографического развития на основе комплексной картографической характеристики социальных и демографических показателей человеческого развития Республики Казахстан с применением ГИС-технологий и защиты информации.</p>
+        }
+    }
+</div>

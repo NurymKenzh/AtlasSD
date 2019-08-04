@@ -1,0 +1,90 @@
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Copy"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Copy"]</h2>
+<h4>@SharedLocalizer["Regions"]</h4>
+
+<form asp-action="Copy">
+    <div class="form-horizontal">
+        <div class="text-danger">@ViewBag.Result</div>
+        <hr />
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["YearFrom"]</label>
+            <div class="col-md-2 col-md-10">
+                @Html.DropDownList("YearFrom", (IEnumerable<SelectListItem>)ViewBag.YearFrom, htmlAttributes: new { @id = "yearfrom", @class = "form-control", @onchange = "ChangeYearFrom()" })
+            </div>
+            <label class="col-md-2 control-label">@SharedLocalizer["RegionsCount"]</label>
+            <label id="regionsfrom" class="col-md-2 control-label"></label>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">@SharedLocalizer["YearTo"]</label>
+            <div class="col-md-2 col-md-10">
+                @Html.DropDownList("YearTo", (IEnumerable<SelectListItem>)ViewBag.YearTo, htmlAttributes: new { @id = "yearto", @class = "form-control", @onchange = "ChangeYearTo()" })
+            </div>
+            <label class="col-md-2 control-label">@SharedLocalizer["RegionsCount"]</label>
+            <label id="regionsto" class="col-md-2 control-label"></label>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Copy"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    <input id="backlinktext" type="hidden" name="backlink" />
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    function ChangeYearFrom() {
+        $.ajax({
+            url: '@Url.Action("GetRegionsCountByYear")',
+            data: { Year: parseInt($('#yearfrom').val()) },
+            type: 'POST',
+            success: function (data) {
+                $('#regionsfrom').html(data);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeYearTo() {
+        $.ajax({
+            url: '@Url.Action("GetRegionsCountByYear")',
+            data: { Year: parseInt($('#yearto').val()) },
+            type: 'POST',
+            success: function (data) {
+                $('#regionsto').html(data);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        if (!$('#backlink').prop("href")) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        ChangeYearFrom();
+        ChangeYearTo();
+    });
+</script>

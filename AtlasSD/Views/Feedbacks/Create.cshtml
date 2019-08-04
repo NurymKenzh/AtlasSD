@@ -1,0 +1,55 @@
+@model AtlasSD.Models.Feedback
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Create"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Create"]</h2>
+@{
+    var user = Context.User;
+    bool adminmoderator = false;
+}
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["Feedback"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Email" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Message" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @*<input asp-for="Message" class="form-control" />*@
+                @Html.TextArea("Message", null, new { @class = "form-control", rows = 5 })
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Create"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator"))
+    {
+        <div>
+            <a asp-action="Index">@SharedLocalizer["BackToList"]</a>
+        </div>
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

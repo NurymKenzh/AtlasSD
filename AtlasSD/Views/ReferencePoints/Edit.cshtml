@@ -1,0 +1,143 @@
+@model AtlasSD.Models.ReferencePointViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Edit"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Edit"]</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["ReferencePoint"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Indicator.Group.BlocId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="BlocId" asp-for="BlocId" class="form-control" asp-items="ViewBag.BlocId" onchange="ChangeBloc()"></select>
+                <span asp-validation-for="BlocId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Indicator.GroupId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="GroupId" asp-for="GroupId" class="form-control" asp-items="ViewBag.GroupId" onchange="ChangeGroup()"></select>
+                <span asp-validation-for="GroupId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="IndicatorId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="IndicatorId" asp-for="IndicatorId" class="form-control" asp-items="ViewBag.IndicatorId"></select>
+                <span asp-validation-for="IndicatorId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Min" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Min" class="form-control" />
+                <span asp-validation-for="Min" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Max" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Max" class="form-control" />
+                <span asp-validation-for="Max" class="text-danger"></span>
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Save"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }*@
+
+<script>
+    $.validator.methods.range = function (value, element, param) {
+        var globalizedValue = value.replace(",", ".");
+        return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+    }
+
+    $.validator.methods.number = function (value, element) {
+        return this.optional(element) || /-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+    }
+    //Date dd/MM/yyyy
+    $.validator.methods.date = function (value, element) {
+        var date = value.split("/");
+        return this.optional(element) || !/Invalid|NaN/.test(new Date(date[2], date[1], date[0]).toString());
+    }
+</script>
+
+<script>
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+                ChangeGroup();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroup")',
+            data: { GroupId: $('#GroupId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#IndicatorId").empty();
+                $('#IndicatorId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+        ChangeYear();
+        ChangeBloc();
+    });
+</script>

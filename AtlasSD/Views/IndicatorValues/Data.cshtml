@@ -1,0 +1,21 @@
+@using AtlasSD.Controllers
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization;
+@inject IViewLocalizer Localizer
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Data"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Data"]</h2>
+
+<div>
+    <p>
+        @Html.ActionLink(SharedLocalizer["IndicatorValues"], "Index", "IndicatorValues", null, new { @class = "btn btn-default" })
+    </p>
+    <p>
+        @Html.ActionLink(SharedLocalizer["Parse"], "Parse", "IndicatorValues", null, new { @class = "btn btn-default" })
+    </p>
+</div>

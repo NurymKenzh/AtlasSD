@@ -1,0 +1,295 @@
+@model AtlasSD.Models.Indicator
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Create"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Create"]</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>@SharedLocalizer["Indicator"]</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Type" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="Type" asp-for="Type" class="form-control" asp-items="ViewBag.IndicatorTypes" onchange="ChangeType()"></select>
+            </div>
+        </div>
+        <div class="form-group Group">
+            <label asp-for="Group.BlocId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="BlocId" class="form-control" asp-items="ViewBag.BlocId" onchange="ChangeBloc()"></select>
+            </div>
+        </div>
+        <div class="form-group Group">
+            <label asp-for="GroupId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select id="GroupId" asp-for="GroupId" class ="form-control" asp-items="ViewBag.GroupId"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NameEN" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameEN" class="form-control" />
+                <span asp-validation-for="NameEN" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NameKK" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameKK" class="form-control" />
+                <span asp-validation-for="NameKK" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="NameRU" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="NameRU" class="form-control" />
+                <span asp-validation-for="NameRU" class="text-danger"></span>
+            </div>
+        </div>
+        <div id="FormulaDiv" class="form-group" hidden="hidden">
+            <label asp-for="Formula" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input id="Formula" asp-for="Formula" class="form-control" />
+                <span asp-validation-for="Formula" class="text-danger"></span>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>
+                                <label>
+                                    @SharedLocalizer["Operands"]
+                                </label>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="button" value="+" class="btn btn-default" onclick="AddToFormula('+')" />
+                                <input type="button" value="-" class="btn btn-default" onclick="AddToFormula('-')" />
+                                <input type="button" value="*" class="btn btn-default" onclick="AddToFormula('*')" />
+                                <input type="button" value="/" class="btn btn-default" onclick="AddToFormula('/')" />
+                                <input type="button" value="(" class="btn btn-default" onclick="AddToFormula('(')" />
+                                <input type="button" value=")" class="btn btn-default" onclick="AddToFormula(')')" />
+                                <input type="button" value="@SharedLocalizer["AreaPure"] (Area)" class="btn btn-default" onclick="AddToFormula('Area')" />
+                                <input type="button" value="@SharedLocalizer["Population"] (Population)" class="btn btn-default" onclick="AddToFormula('Population')" />
+                                <input type="button" value="@SharedLocalizer["DollarRate"] ($)" class="btn btn-default" onclick="AddToFormula('$')" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>
+                                <label>
+                                    @SharedLocalizer["Bloc"]
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    @SharedLocalizer["Group"]
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    @SharedLocalizer["Indicator"]
+                                </label>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select id="BlocIdPaste" class="form-control" asp-items="ViewBag.BlocId" onchange="ChangeBlocPaste()"></select>
+                            </td>
+                            <td>
+                                <select id="GroupIdPaste" class="form-control" asp-items="ViewBag.GroupId" onchange="ChangeGroupPaste()"></select>
+                            </td>
+                            <td>
+                                <select id="IndicatorIdPaste" class="form-control" onchange="ChangeIndicatorPaste()"></select>
+                            </td>
+                            <td>
+                                <input type="button" value="@SharedLocalizer["AddValue"]" class="btn btn-default" onclick="Paste()"/>
+                            </td>
+                            <td class="Reference">
+                                <input type="button" value="@SharedLocalizer["AddMin"]" class="btn btn-default Reference" onclick="Paste('Min')" />
+                            </td>
+                            <td class="Reference">
+                                <input type="button" value="@SharedLocalizer["AddMax"]" class="btn btn-default Reference" onclick="Paste('Max')" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input id="backlinktext" type="hidden" name="backlink" value="@ViewBag.BackLink" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SharedLocalizer["Create"]" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
+</div>
+
+@*@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}*@
+<script>
+    $.validator.methods.range = function (value, element, param) {
+        var globalizedValue = value.replace(",", ".");
+        return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+    }
+
+    $.validator.methods.number = function (value, element) {
+        return this.optional(element) || /-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+    }
+    //Date dd/MM/yyyy
+    $.validator.methods.date = function (value, element) {
+        var date = value.split("/");
+        return this.optional(element) || !/Invalid|NaN/.test(new Date(date[2], date[1], date[0]).toString());
+    }
+</script>
+
+<script>
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeType() {
+        if ($('#Type option:selected').index() > 0) {
+            $('#FormulaDiv').show();
+        }
+        else {
+            $('#FormulaDiv').hide();
+        }
+        if ($('#Type option:selected').index() == 2) {
+            $('.Reference').show();
+            $('.Group').hide();
+        }
+        else {
+            $('.Reference').hide();
+            $('.Group').show();
+        }
+    };
+
+    function ChangeBlocPaste() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocIdPaste').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupIdPaste').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $("#GroupIdPaste").empty();
+                $('#GroupIdPaste').append(optionhtml);
+                ChangeGroupPaste();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroupPaste() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroupPaste")',
+            data: { GroupId: $('#GroupIdPaste').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['code'] + '"' +
+                        (data[i]['id'] == $('#IndicatorIdPaste').val() ? 'selected' : '') +
+                        '>' + data[i]['nameCode'] +
+                        '</option>';
+                });
+                $('#IndicatorIdPaste').empty();
+                $('#IndicatorIdPaste').append(optionhtml);
+                ChangeIndicatorPaste()
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeIndicatorPaste() {
+        $.ajax({
+            url: '@Url.Action("GetReferenceByIndicatorPaste")',
+            data: { IndicatorCode: $('#IndicatorIdPaste').val() },
+            type: 'POST',
+            success: function (data) {
+                if (data > 0) {
+                    $('.Reference').prop('disabled', false);
+                }
+                else {
+                    $('.Reference').prop('disabled', true);
+                }
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function Paste(S) {
+        if ($('#IndicatorIdPaste').val() != null) {
+            if (S == null || S == '') {
+                $('#Formula').val($('#Formula').val() + $('#IndicatorIdPaste').val());
+            }
+            else if (S == 'Min') {
+                $('#Formula').val($('#Formula').val() + 'Min(' +  $('#IndicatorIdPaste').val() + ')');
+            }
+            else if (S == 'Max') {
+                $('#Formula').val($('#Formula').val() + 'Max(' + $('#IndicatorIdPaste').val() + ')');
+            }
+        }
+    };
+
+    function AddToFormula(operand) {
+        $('#Formula').val($('#Formula').val() + operand);
+    };
+
+    $(document).ready(function (e) {
+        if ($('#backlinktext').val()) {
+            $('#backlink').prop("href", document.referrer);
+        }
+        else {
+            $('#backlinktext').val(document.referrer);
+        }
+        $('#backlink').prop("href", $('#backlinktext').val());
+        ChangeType();
+        ChangeBloc();
+        ChangeBlocPaste();
+    });
+</script>

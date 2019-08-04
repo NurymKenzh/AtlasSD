@@ -1,0 +1,405 @@
+@model MapIndexPageViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Maps"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Maps"]</h2>
+
+@{
+    var user = Context.User;//HttpContext.Current.User;
+    bool adminmoderator = false;
+}
+@if (user.Identity.IsAuthenticated)
+{
+    if (user.IsInRole("Administrator") || (user.IsInRole("Moderator")))
+    {
+        adminmoderator = true;
+        <p>
+            <a asp-action="Create">@SharedLocalizer["Create"]</a>
+        </p>
+    }
+}
+
+@using (Html.BeginForm("Index", "Maps", new
+{
+    SortOrder = ViewBag.SortOrder,
+    BlocId = ViewBag.BlocIdFilter,
+    GroupId = ViewBag.GroupIdFilter,
+    NameEN = ViewBag.NameENFilter,
+    NameKK = ViewBag.NameKKFilter,
+    NameRU = ViewBag.NameRUFilter,
+    Description = ViewBag.DescriptionFilter
+}, FormMethod.Get))
+{
+    @Html.Editor("SortOrder", null, new { htmlAttributes = new { @hidden = "hidden" }, value = ViewBag.SortOrder })
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage - 1,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new
+                        {
+                            Page = page,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage + 1,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.TotalPages,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator.Group.Bloc).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.BlocSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, "", htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator.Group).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.GroupSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, "", htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Indicator).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.IndicatorSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.DropDownList("IndicatorId", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, "", htmlAttributes: new { @id = "IndicatorId", @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().NameEN).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.NameENSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.Editor("NameEN", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().NameKK).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.NameKKSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.Editor("NameKK", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(i => i.Items.FirstOrDefault().NameRU).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.NameRUSort,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                    <br />
+                    @Html.Editor("NameRU", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.Raw(Html.DisplayNameFor(i => i.Items.FirstOrDefault().Description).ToString())
+                    <br />
+                    @Html.Editor("Description", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    <br />
+                    <input type="submit" value="@SharedLocalizer["Find"]" class="btn btn-default">
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Group.Bloc.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Group.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Indicator.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameEN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameKK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameRU)
+                </td>
+                <td>
+                    
+                </td>
+                @if (adminmoderator)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer["Edit"]</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">@SharedLocalizer["Details"]</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">@SharedLocalizer["Delete"]</a> |
+                        <a asp-action="View" asp-route-id="@item.Id">@SharedLocalizer["View"]</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="View" asp-route-id="@item.Id">@SharedLocalizer["View"]</a>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage - 1,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new
+                        {
+                            Page = page,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage + 1,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.TotalPages,
+                            SortOrder = ViewBag.SortOrder,
+                            BlocId = ViewBag.BlocIdFilter,
+                            GroupId = ViewBag.GroupIdFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Description = ViewBag.DescriptionFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+}
+
+<script>
+    function ChangeBloc() {
+        $.ajax({
+            url: '@Url.Action("GetGroupsByBloc")',
+            data: { BlocId: $('#BlocId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#GroupId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#GroupId").empty();
+                $('#GroupId').append(optionhtml);
+                ChangeGroup();
+            },
+            error: function () {
+            }
+        });
+    };
+
+    function ChangeGroup() {
+        $.ajax({
+            url: '@Url.Action("GetIndicatorByGroup")',
+            data: { GroupId: $('#GroupId').val() },
+            type: 'POST',
+            success: function (data) {
+                var optionhtml = '<option value=""></option>';
+                $.each(data, function (i) {
+                    optionhtml += '<option value="' + data[i]['id'] + '"' +
+                        (data[i]['id'] == $('#IndicatorId').val() ? 'selected' : '') +
+                        '>' + data[i]['name'] +
+                        '</option>';
+                });
+                $("#IndicatorId").empty();
+                $('#IndicatorId').append(optionhtml);
+            },
+            error: function () {
+            }
+        });
+    };
+
+    $(document).ready(function (e) {
+        ChangeBloc();
+    });
+</script>

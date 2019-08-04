@@ -1,0 +1,345 @@
+@model RegionIndexPageViewModel
+@using AtlasSD.Controllers
+@using Microsoft.Extensions.Localization;
+@using System.Net
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = SharedLocalizer["Regions"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@SharedLocalizer["Regions"]</h2>
+
+<p>
+    <a asp-action="Upload">@SharedLocalizer["Upload"]</a>
+    <a asp-action="Copy">@SharedLocalizer["Copy"]</a>
+</p>
+
+@using (Html.BeginForm("Index", "Regions",
+    new { SortOrder = ViewBag.SortOrder,
+        Code = ViewBag.CodeFilter,
+        NameEN = ViewBag.NameENFilter,
+        NameKK = ViewBag.NameKKFilter,
+        NameRU = ViewBag.NameRUFilter,
+        Year = ViewBag.YearFilter,
+        Area = ViewBag.AreaFilter,
+        Population = ViewBag.PopulationFilter
+    }, FormMethod.Get))
+{
+    @Html.Editor("SortOrder", null, new { htmlAttributes = new { @hidden = "hidden" }, value = ViewBag.SortOrder })
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new { SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage - 1, SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new { Page = page, SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new { Page = Model.Pager.CurrentPage + 1, SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new { Page = Model.Pager.TotalPages, SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().Code).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.CodeSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("Code", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().NameEN).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameENSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("NameEN", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().NameKK).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameKKSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("NameKK", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().NameRU).ToString(), "Index",
+                        new { SortOrder = ViewBag.NameRUSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("NameRU", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().Year).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.YearSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.DropDownList("Year", (IEnumerable<SelectListItem>)ViewBag.Year, "", htmlAttributes: new { @class = "form-control" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().Area).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.AreaSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("AreaMin", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })-
+                    @Html.Editor("AreaMax", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    @Html.ActionLink(Html.DisplayNameFor(b => b.Items.FirstOrDefault().Population).ToString(), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.PopulationSort,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                    <br />
+                    @Html.Editor("PopulationMin", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })-
+                    @Html.Editor("PopulationMax", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })
+                </th>
+                <th>
+                    <br />
+                    <input type="submit" value="@SharedLocalizer["Find"]" class="btn btn-default">
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameEN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameKK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameRU)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Area)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Population)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">@SharedLocalizer["Edit"]</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">@SharedLocalizer["Details"]</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">@SharedLocalizer["Delete"]</a>
+                </td>
+            </tr>
+        }
+    </table>
+    @if (Model.Pager.EndPage > 1)
+    {
+        <ul class="pagination">
+            @if (Model.Pager.CurrentPage > 1)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;&laquo;"), "Index",
+                        new
+                        {
+                            SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&laquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage - 1,
+                            SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+
+            @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+            {
+                <li class="@(page == Model.Pager.CurrentPage ? "active" : "")">
+                    @Html.ActionLink(page.ToString(), "Index",
+                        new
+                        {
+                            Page = page,
+                            SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+
+            @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+            {
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.CurrentPage + 1,
+                            SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+                <li>
+                    @Html.ActionLink(WebUtility.HtmlDecode("&raquo;&raquo;"), "Index",
+                        new
+                        {
+                            Page = Model.Pager.TotalPages,
+                            SortOrder = ViewBag.SortOrder,
+                            Code = ViewBag.CodeFilter,
+                            NameEN = ViewBag.NameENFilter,
+                            NameKK = ViewBag.NameKKFilter,
+                            NameRU = ViewBag.NameRUFilter,
+                            Year = ViewBag.YearFilter,
+                            Area = ViewBag.AreaFilter,
+                            Population = ViewBag.PopulationFilter
+                        })
+                </li>
+            }
+        </ul>
+    }
+}
