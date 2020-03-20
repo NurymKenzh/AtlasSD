@@ -112,7 +112,6 @@
     <input id="chartcount" value="@Model.IndicatorIds.Count()"/>
     <input id="chartcolors" value="@string.Join(",", Model.IndicatorColors)" />
     <input id="KZ" value="@ViewBag.KZ" />
-    @*<input id="deviation" value="@SharedLocalizer["deviation"]" />*@
 </div>
 
 <div id="info" hidden="hidden">
@@ -145,17 +144,6 @@
 
 <div id="finddialog" hidden="hidden" title="@SharedLocalizer["Find"]">
     <table id="findtable">
-        @*<tr>
-            <td>
-                @SharedLocalizer["from"]
-            </td>
-            <td>
-                -
-            </td>
-            <td>
-                @SharedLocalizer["before"]
-            </td>
-        </tr>*@
         <tr>
             <th>
                 @Model.Indicator.Name
@@ -204,7 +192,6 @@
     var layers = [];
     var layercharts = [];
     var layersfind = [];
-    //var layerchartsfind = [];
     var animation = false;
     var styleCache = {};
     var find = false;
@@ -273,15 +260,10 @@
         if (!style) {
             var radius = 20;
             // area proportional to data size: s=PI*r^2
-            //if ($("#graph").val() != "bar") {
-            //    radius = 8 * Math.sqrt(feature.get("size") / Math.PI);
-            //}
-            //if ($("#graph").val() == "bar") {
-                if (feature.get("data").length == 1) {
-                    radius = radius * feature.get("data")[0] / chartmax;
-                }
-            //}
-            // Create chart style
+            if (feature.get("data").length == 1) {
+                radius = radius * feature.get("data")[0] / chartmax;
+            }
+            // create chart style
             var c = $("#chartcolors").val();
             styleCache[k] = style = new ol.style.Style(
                 {
@@ -291,7 +273,6 @@
                             radius: (sel ? 1.2 : 1) * radius,
                             offsetY: $("#graph").val() == 'pie' ? 0 : (sel ? -1.2 : -1) * feature.get("radius"),
                             data: feature.get("data") || [10, 30, 20],
-                            //colors: /,/.test(c) ? c.split(",") : c,
                             colors: c.split(",").length == 1 ? [c, c] : c.split(","),
                             rotateWithView: true,
                             animation: animation,
@@ -360,7 +341,6 @@
             }
             Layer_baseour.set('name', 'baseour');
             map.addLayer(Layer_baseour);
-            //map.getLayers().getArray()[map.getLayers().getArray().length - 1].set('name', 'baseour');
             for (i = 0; i < layers.length; i++) {
                 var features = [];
                 var f = 0;
@@ -501,14 +481,13 @@
             }
             layercharts[$('#year').val() - $('#yearmin').val()].changed();
         });
-        // Force redraw
+        // force redraw
         for (i = 0; i < layercharts.length; i++) {
             layercharts[i].changed();
         }
-        //map.renderSync();
     }
 
-    // смена базового слоя
+    // base layer change
     function ChangeMapSource(val) {
         if (val == 'OpenStreetMap') {
             Layer_Base.setSource(new ol.source.OSM());
@@ -570,26 +549,16 @@
     }
 
     function Find() {
-        //map.removeLayer(map.getLayers().getArray()[map.getLayers().getArray().length - 1]);
         for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
             if (map.getLayers().getArray()[l].get('name') == 'chart') {
                 map.removeLayer(map.getLayers().getArray()[l]);
             }
         }
-        //for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
-        //    if (map.getLayers().getArray()[l].get('name') == 'baseour') {
-        //        map.removeLayer(map.getLayers().getArray()[l]);
-        //    }
-        //}
         for (l = 0; l < layersfind.length; l++) {
             var features = layers[l].getSource().getFeatures();
             var featurecharts = layercharts[l].getSource().getFeatures();
             for (j = 0; j < features.length; j++) {
                 if (features[j].get('Code') != '00') {
-                    //if (features[j].get('Value') > 500) {
-                    //    var clone = features[j].clone();
-                    //    layersfind[l].getSource().addFeatures([clone]);
-                    //}
                     var add = true;
                     if ($("#min0").val()) {
                         if (features[j].get('Value') < $("#min0").val()) {
@@ -645,8 +614,6 @@
             layers[l].setVisible(false);
             layercharts[l].setVisible(false);
         }
-        //Layer_baseour.set('name', 'baseour');
-        //map.addLayer(Layer_baseour);
         for (l = 0; l < layercharts.length; l++) {
             layercharts[l].set('name', 'chart');
             map.addLayer(layercharts[l]);
@@ -657,14 +624,11 @@
     };
 
     function FindReset() {
-        //map.removeLayer(map.getLayers().getArray()[map.getLayers().getArray().length - 1]);
         for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
             if (map.getLayers().getArray()[l].get('name') == 'chart') {
                 map.removeLayer(map.getLayers().getArray()[l]);
             }
         }
-        //Layer_baseour.set('name', 'baseour');
-        //map.addLayer(Layer_baseour);
         for (i = 0; i < layers.length; i++) {
             var features = [];
             var f = 0;

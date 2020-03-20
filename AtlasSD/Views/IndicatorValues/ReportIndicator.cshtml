@@ -26,21 +26,18 @@
             <label class="col-md-2 control-label">@SharedLocalizer["Bloc"]</label>
             <div class="col-md-10">
                 @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
-                @*<span asp-validation-for="BlocId" class="text-danger"></span>*@
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label">@SharedLocalizer["Group"]</label>
             <div class="col-md-10">
                 @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
-                @*<span asp-validation-for="GroupId" class="text-danger"></span>*@
             </div>
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label">@SharedLocalizer["Indicator"]</label>
             <div class="col-md-10">
                 @Html.DropDownList("IndicatorId", (IEnumerable<SelectListItem>)ViewBag.IndicatorId, htmlAttributes: new { @id = "IndicatorId", @class = "form-control" })
-                @*<span asp-validation-for="IndicatorId" class="text-danger"></span>*@
             </div>
         </div>
         <div class="form-group">

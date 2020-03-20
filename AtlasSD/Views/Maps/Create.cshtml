@@ -54,7 +54,6 @@
         <div class="form-group">
             <label asp-for="DescriptionEN" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="DescriptionEN" class="form-control" />*@
                 @Html.TextArea("DescriptionEN", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="DescriptionEN" class="text-danger"></span>
             </div>
@@ -62,7 +61,6 @@
         <div class="form-group">
             <label asp-for="DescriptionKK" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="DescriptionKK" class="form-control" />*@
                 @Html.TextArea("DescriptionKK", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="DescriptionKK" class="text-danger"></span>
             </div>
@@ -70,7 +68,6 @@
         <div class="form-group">
             <label asp-for="DescriptionRU" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="DescriptionRU" class="form-control" />*@
                 @Html.TextArea("DescriptionRU", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="DescriptionRU" class="text-danger"></span>
             </div>
@@ -78,7 +75,6 @@
         <div class="form-group">
             <label asp-for="KeywordsEN" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="KeywordsEN" class="form-control" />*@
                 @Html.TextArea("KeywordsEN", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="KeywordsEN" class="text-danger"></span>
             </div>
@@ -86,7 +82,6 @@
         <div class="form-group">
             <label asp-for="KeywordsKK" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="KeywordsKK" class="form-control" />*@
                 @Html.TextArea("KeywordsKK", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="KeywordsKK" class="text-danger"></span>
             </div>
@@ -94,7 +89,6 @@
         <div class="form-group">
             <label asp-for="KeywordsRU" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="KeywordsRU" class="form-control" />*@
                 @Html.TextArea("KeywordsRU", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="KeywordsRU" class="text-danger"></span>
             </div>
@@ -103,7 +97,6 @@
             <label class="col-md-2 control-label">@SharedLocalizer["Bloc"]</label>
             <div class="col-md-10">
                 <input id="BlocIdInput" type="hidden" name="BlocId" value="@Model.BlocId" class="form-control" />
-                @*<select id="BlocId" class="form-control" asp-items="ViewBag.BlocId" onchange="ChangeBloc()"></select>*@
                 @Html.DropDownList("BlocId", (IEnumerable<SelectListItem>)ViewBag.BlocId, "", htmlAttributes: new { @id = "BlocId", @class = "form-control", @onchange = "ChangeBloc()" })
             </div>
         </div>
@@ -111,7 +104,6 @@
             <label class="col-md-2 control-label">@SharedLocalizer["Group"]</label>
             <div class="col-md-10">
                 <input id="GroupIdInput" type="hidden" name="GroupId" value="@Model.GroupId" class="form-control" />
-                @*<select id="GroupId" class="form-control" asp-items="ViewBag.GroupId" onchange="ChangeGroup()"></select>*@
                 @Html.DropDownList("GroupId", (IEnumerable<SelectListItem>)ViewBag.GroupId, "", htmlAttributes: new { @id = "GroupId", @class = "form-control", @onchange = "ChangeGroup()" })
             </div>
         </div>

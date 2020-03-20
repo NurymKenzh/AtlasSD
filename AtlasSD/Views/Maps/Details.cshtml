@@ -36,44 +36,36 @@
             @Html.DisplayNameFor(model => model.DescriptionEN)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.DescriptionEN)*@
-            @*@Html.Raw("<pre>" + Html.Encode(Model.DescriptionEN) + "</pre>");*@
             <pre style="border-color: white; background-color: white;">@Model.DescriptionEN</pre>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.DescriptionKK)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.DescriptionKK)*@
             <pre style="border-color: white; background-color: white;">@Model.DescriptionKK</pre>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.DescriptionRU)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.DescriptionRU)*@
             <pre style="border-color: white; background-color: white;">@Model.DescriptionRU</pre>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.KeywordsEN)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.KeywordsEN)*@
-            @*@Html.Raw("<pre>" + Html.Encode(Model.KeywordsEN) + "</pre>");*@
             <pre style="border-color: white; background-color: white;">@Model.KeywordsEN</pre>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.KeywordsKK)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.KeywordsKK)*@
             <pre style="border-color: white; background-color: white;">@Model.KeywordsKK</pre>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.KeywordsRU)
         </dt>
         <dd>
-            @*@Html.DisplayFor(model => model.KeywordsRU)*@
             <pre style="border-color: white; background-color: white;">@Model.KeywordsRU</pre>
         </dd>
         <dt>
@@ -169,17 +161,12 @@
                                         <div style="height: 20px; width: 40px; border-width: 1px; border-style: solid; background-color: @Model.MapIndicators[i].Color;"></div>
                                     </td>
                                     <td>
-                                        @*<select id="@BlocId" name="MapIndicators[@i].BlocId" class="form-control" asp-items="ViewBag.IndicatorsBlocId[@i]" onchange="ChangeIndicatorBloc(@i)"></select>*@
                                         @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Group.Bloc.Name)
                                     </td>
                                     <td>
-                                        @*<select id="@GroupId" name="MapIndicators[@i].GroupId" class="form-control" asp-items="ViewBag.IndicatorsGroupId[@i]" onchange="ChangeIndicatorGroup(@i)"></select>*@
                                         @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Group.Name)
                                     </td>
                                     <td>
-                                        @*<input id="@IndicatorIdInput" type="hidden" name="MapIndicators[@i].IndicatorId" value="@Model.MapIndicators[i].IndicatorId" class="form-control" />
-                                        <select id="@IndicatorId" class="form-control" asp-items="ViewBag.IndicatorsIndicatorId[@i]" onchange="ChangeIndicatorIndicator(@i)"></select>
-                                        @Html.ValidationMessageFor(model => model.MapIndicators[i].IndicatorId, "", new { @class = "text-danger" })*@
                                         @Html.DisplayFor(model => model.MapIndicators[i].Indicator.Name)
                                     </td>
                                 </tr>

@@ -64,10 +64,6 @@
     <a id="backlink" href="@ViewBag.BackLink">@SharedLocalizer["BackToList"]</a>
 </div>
 
-@*@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}*@
-
 <script>
     $.validator.methods.range = function (value, element, param) {
         var globalizedValue = value.replace(",", ".");

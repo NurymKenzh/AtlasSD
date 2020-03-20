@@ -27,7 +27,6 @@
         <div class="form-group">
             <label asp-for="Message" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @*<input asp-for="Message" class="form-control" />*@
                 @Html.TextArea("Message", null, new { @class = "form-control", rows = 5 })
                 <span asp-validation-for="Message" class="text-danger"></span>
             </div>

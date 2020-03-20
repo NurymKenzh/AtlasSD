@@ -1,4 +1,3 @@
-@*@model IEnumerable<AtlasSD.Models.Log>*@
 @model LogIndexPageViewModel
 @using AtlasSD.Controllers
 @using Microsoft.Extensions.Localization;
@@ -58,7 +57,6 @@
                         new { SortOrder = ViewBag.DateTimeSort, Email = ViewBag.EmailFilter, Operation = ViewBag.OperationFilter })
                     <br />
                     <br />
-                    @*@Html.Editor("DateTime", null, new { htmlAttributes = new { @class = "form-control" }, value = "" })*@
                 </th>
                 <th>
                     @Html.ActionLink(Html.DisplayNameFor(l => l.Items.FirstOrDefault().Email).ToString(), "Index",
@@ -133,52 +131,3 @@
         </ul>
     }
 }
-
-@*<table class="table">
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Email)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DateTime)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Operation)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Old)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.New)
-                </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Operation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Old)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.New)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>*@

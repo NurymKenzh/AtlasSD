@@ -1,5 +1,4 @@
 ﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
-@* => Drop down with images *@
 @using Microsoft.AspNetCore.Builder
 @using Microsoft.AspNetCore.Http.Features
 @using Microsoft.AspNetCore.Localization
@@ -7,7 +6,6 @@
 @using Microsoft.Extensions.Options
 @inject IViewLocalizer Localizer
 @inject IOptions<RequestLocalizationOptions> LocOptions
-@* <= *@
 
 <!DOCTYPE html>
 <html>
@@ -15,7 +13,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AtlasSD</title>
-
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -31,8 +28,6 @@
     @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
-    
-
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -45,9 +40,6 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">
                     <img src="~/images/logo2.png" />
                 </a>
-                @*<a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">
-                    AtlasSD (Alpha testing)
-                </a>*@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -56,7 +48,6 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">@Localizer["Contact"]</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Help">@Localizer["Help"]</a></li>
                     <li><a asp-area="" asp-controller="Maps" asp-action="Index">@Localizer["Maps"]</a></li>
-                    
                     @await Html.PartialAsync("_AdministratorPartial")
                 </ul>
                 @* => Drop down with images *@
@@ -119,8 +110,6 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
-
-
     <div class="body-content">
         @RenderBody()
         <hr />
@@ -128,9 +117,6 @@
             <p>&copy; @DateTime.Now.Year - AtlasSD</p>
         </footer>
     </div>
-    
-    
-
     @* => Drop down with images *@
     <link href="~/css/msdropdown/dd.css" rel="stylesheet" />
     <script src="~/js/msdropdown/jquery.dd.min.js"></script>
@@ -148,6 +134,5 @@
     </script>
     @* <= *@
     @RenderSection("Scripts", required: false)
-    
 </body>
 </html>
