@@ -1,2 +1,56 @@
-Help in English
+Site language
+The current language of the site is displayed in the main menu (top right) in the form of an icon corresponding to the country (English, Kazakh, Russian).
+To change the language of the site, select the desired language in the drop-down list with the country icon.
+Registration and authorization
+New users are registered on the “Registration” page, the page is accessible from the main menu item of the unauthorized user “Registration”. To register, you must enter an email, password and its confirmation.
+The “Login” page, accessible from the main menu, authorizes registered users by e-mail and password.
+Tree of indicators
+To search for data and maps by indicators, use the indicator tree on the main page of the site. When you select a block of indicators (root level of the tree), group of indicators (second level of nesting), indicator (third level of nesting), on the right side of the screen, under the “Topic Cards” item, a list of links with the names of the cards that belong to the selected item in the tree will be displayed. To view the map, just follow the link with its name.
+To view the indicator values ​​through the indicator tree, you must click on the button with the “i” symbol next to the indicator name in the tree.
+Indices (integrated cards) are displayed in the “Indices” item.
+Contacts and site information
+Contact information and information about the site are presented on the pages "Contacts" and "About the site", respectively.
+List of cards
+For a more accurate and convenient search for maps, go to the "Maps" page, which contains a list of all the maps on the site. The list can be filtered by the following fields:
+• block of indicators,
+• group of indicators,
+• indicator,
+• name (in any language),
+• description,
+• keywords.
+After selecting, entering the limiting parameters, click the "Find" button.
+To sort the list of cards, click on the appropriate link:
+• block of indicators,
+• group of indicators,
+• indicator,
+• name (in any language).
+To view the map, click on the “Watch” link opposite the corresponding map in the list.
+View map
+On the map viewing page is located:
+• name of the card (at the top),
+• map menu (on the left side),
+• interactive map (on the right side).
+The map menu consists of:
+• legends to the map in the form of a color indicator and a text description of the item;
+• legend to the points of the diagram (if there is one on the map);
+• a drop-down list of chart types (circular, circular three-dimensional, circular, histogram);
+• a drop-down list of types of base layers (OpenStreetMap, ArcGIS, Bing, BingAerial, Stamen);
+• scroll bars for changing the transparency of the base layer and data layer (from 0% to 100%);
+• search button (calls up the search menu for areas whose values ​​for the selected year will correspond to the entered data);
+• scroll bar of the year (when changing, we redraw the map with the values ​​of the selected year).
+To get information about an area, click on it on the map. The following information will be presented in the window that appears:
+• area name,
+• values ​​of the main indicator (for the selected year),
+• values ​​of indicators of the chart (if there is one on the map),
+• differences (deviations) of indicators from national average values.
+When you click on the value of the main indicator or its deviation from the average republican indicator, a window is opened with a diagram showing the change in the value of the main indicator and its deviation from the average republican value for the selected region for all years.
+When you click on the value of a chart indicator or its deviation from the average republican indicator, a window is opened with a view of the diagram for changing the value of the chart indicator and its deviation from the average republican value for the selected region for all years.
+Reports
+This page provides links to three types of reports:
+• by region
+• by indicators
+• on years.
+The report on the region makes it possible to get a report on the region, for three indicators and three years. A report on indicators gives you the opportunity to get a report on an indicator, three areas and three years. The report by years makes it possible to get a full report on the indicator for all years and in all areas.
+To generate a report, select the appropriate parameters and click the "Download" button.
+All reports are generated in MS Excel format and are available for download.
             
