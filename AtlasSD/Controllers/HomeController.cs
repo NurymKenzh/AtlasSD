@@ -40,59 +40,6 @@ namespace AtlasSD.Controllers
             ViewBag.Blocs = _context.Bloc.OrderBy(b => b.Name).ToList();
             ViewBag.Groups = _context.Group.OrderBy(g => g.Name).ToList();
             ViewBag.Indicators = _context.Indicator.Where(i=>!string.IsNullOrEmpty(i.Name)).OrderBy(i => i.Name).ToList();
-            //ViewBag.Maps = _context.Map.Include(i => i.Indicator).Where(m => m.Indicator.Type == Startup.Configuration["Integral"]).OrderBy(m => m.Name).ToList();
-
-            //Indicator indicatorTest = _context.Indicator.FirstOrDefault(i => i.NameEN == "Test indicator 0"); // 100 - 1000
-            //Indicator indicatorTest1 = _context.Indicator.FirstOrDefault(i => i.NameEN == "Test indicator 1"); // 20 - 70
-            //Indicator indicatorTest2 = _context.Indicator.FirstOrDefault(i => i.NameEN == "Test indicator 2"); // 60 - 100
-            //Indicator indicatorTest3 = _context.Indicator.FirstOrDefault(i => i.NameEN == "Test indicator 3"); // 30 - 90
-            //Source source = _context.Source.FirstOrDefault();
-            //List<IndicatorValue> indicatorvalues = new List<IndicatorValue>();
-            //Random random = new Random();
-            //for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= 2016; year++)
-            //{
-            //    foreach (var region in _context.Region.Where(r => r.Year == year))
-            //    {
-            //        indicatorvalues.Add(new IndicatorValue()
-            //        {
-            //            IndicatorId = indicatorTest.Id,
-            //            RegionId = region.Id,
-            //            Year = year,
-            //            Value = random.Next(0, 1000),
-            //            SourceId = source.Id
-            //        });
-            //        indicatorvalues.Add(new IndicatorValue()
-            //        {
-            //            IndicatorId = indicatorTest1.Id,
-            //            RegionId = region.Id,
-            //            Year = year,
-            //            Value = random.Next(20, 70),
-            //            SourceId = source.Id
-            //        });
-            //        indicatorvalues.Add(new IndicatorValue()
-            //        {
-            //            IndicatorId = indicatorTest2.Id,
-            //            RegionId = region.Id,
-            //            Year = year,
-            //            Value = random.Next(60, 100),
-            //            SourceId = source.Id
-            //        });
-            //        indicatorvalues.Add(new IndicatorValue()
-            //        {
-            //            IndicatorId = indicatorTest3.Id,
-            //            RegionId = region.Id,
-            //            Year = year,
-            //            Value = random.Next(30, 90),
-            //            SourceId = source.Id
-            //        });
-            //    }
-            //}
-            //foreach (var ivalue in indicatorvalues)
-            //{
-            //    _context.IndicatorValue.Add(ivalue);
-            //}
-            //_context.SaveChanges();
-
             return View();
         }
 
