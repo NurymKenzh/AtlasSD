@@ -298,7 +298,7 @@ namespace AtlasSD.Controllers
             ViewBag.BackLink = backlink;
             try
             {
-                // просмотр файла
+                // view file
                 if (File != null)
                 {
                     var jsontext = string.Empty;
@@ -322,7 +322,7 @@ namespace AtlasSD.Controllers
                     ViewBag.Year = Enumerable.Range(year_min, DateTime.Now.Year - year_min + 1).Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString() });
                     return View();
                 }
-                // загрузка данных из файла
+                // loading data from a file
                 else
                 {
                     if (string.IsNullOrEmpty(JsonText))

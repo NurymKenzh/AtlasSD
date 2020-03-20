@@ -423,7 +423,7 @@ namespace AtlasSD.Controllers
                 .Where(i => i.Id != indicator.Id)
                 .Include(i => i.Group)
                 .ToList();
-            // расчет значений индикатора
+            // calculation of indicator values
             if (indicator.Type == Startup.Configuration["Calculated"] || indicator.Type == Startup.Configuration["Integral"])
             {
                 indicator.Formula = string.IsNullOrEmpty(indicator.Formula) ? "" : indicator.Formula;
@@ -518,46 +518,6 @@ namespace AtlasSD.Controllers
                                 _context.Update(indicatorValues[i]);
                             }
                         }
-                        await _context.SaveChangesAsync();
-                        //// => расчет значений зависимых индикаторов
-                        //var indicatorsrelated = _context.Indicator
-                        //    .AsNoTracking()
-                        //    .Where(i => i.Formula.Contains($"{Startup.Configuration["FormulaIdFirstChar"]}{id.ToString()}{Startup.Configuration["FormulaIdLastChar"]}"))
-                        //    .ToList();
-                        //foreach (var indicatorrelated in indicatorsrelated)
-                        //{
-                        //    List<IndicatorValue> indicatorrelatedValues = new List<IndicatorValue>();
-                        //    indicatorrelated.Formula = string.IsNullOrEmpty(indicatorrelated.Formula) ? "" : indicatorrelated.Formula;
-                        //    string formula_test = indicatorrelated.Formula;
-                        //    if (!CheckFormula(formula_test, indicatorrelated.Type))
-                        //    {
-                                
-                        //    }
-                        //    else
-                        //    {
-                        //        formula_test = indicatorrelated.Formula;
-                        //        for (int i = 0; i < indicatorsall.Count; i++)
-                        //        {
-                        //            if (!string.IsNullOrEmpty(indicatorsall[i].Code))
-                        //            {
-                        //                formula_test = formula_test.Replace(indicatorsall[i].Code, $"{Startup.Configuration["FormulaIdFirstChar"]}{indicatorsall[i].Id.ToString()}{Startup.Configuration["FormulaIdLastChar"]}");
-                        //            }
-                        //        }
-                        //        indicatorrelatedValues = CalculateIndicatorValues(formula_test, indicatorrelated.Id);
-                        //    }
-                        //    for (int i = 0; i < indicatorrelatedValues.Count(); i++)
-                        //    {
-                        //        if (indicatorrelatedValues[i].Id == 0)
-                        //        {
-                        //            _context.Add(indicatorrelatedValues[i]);
-                        //        }
-                        //        else
-                        //        {
-                        //            _context.Update(indicatorrelatedValues[i]);
-                        //        }
-                        //    }
-                        //}
-                        //// <=
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -906,7 +866,7 @@ namespace AtlasSD.Controllers
             return indicatorValues;
         }
 
-        // расчет значений индикатора
+        // calculation of indicator values
         public void CalculateIndicatorValues(int IndicatorId)
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>();
@@ -945,7 +905,7 @@ namespace AtlasSD.Controllers
             }
         }
 
-        // расчет значений зависимых индикаторов
+        // calculation of values of dependent indicators
         public void CalculateIndicatorsValues(int IndicatorId)
         {
             Indicator indicator = _context.Indicator.AsNoTracking().FirstOrDefault(i => i.Id == IndicatorId);

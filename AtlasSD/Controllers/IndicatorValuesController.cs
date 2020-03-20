@@ -41,8 +41,6 @@ namespace AtlasSD.Controllers
         //[Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> Index(string SortOrder, int? SourceId, string Type, int? BlocId, int? GroupId, int? IndicatorId, int? Year, string RegionCode, int? Page)
         {
-            //KazakhstanCreate();
-
             var indicatorvalues = _context.IndicatorValue
                 .Include(i => i.Indicator)
                 .Include(i => i.Indicator.Group)
@@ -302,14 +300,12 @@ namespace AtlasSD.Controllers
                 }
                 if(create)
                 {
-                    //KazakhstanRegionsCreateByYear(indicatorValueViewModel.IndicatorValues.FirstOrDefault().Region.Year);
                     int regionId = indicatorValueViewModel.IndicatorValues.FirstOrDefault().RegionId;
                     Models.Region region = _context.Region.AsNoTracking().FirstOrDefault(r => r.Id == regionId);
                     KazakhstanValuesCreateByYearIndicator(region.Year, indicatorValueViewModel.IndicatorValues.FirstOrDefault().IndicatorId);
                 }
                 else
                 {
-                    //KazakhstanRegionsEditByYear(indicatorValueViewModel.IndicatorValues.FirstOrDefault().Region.Year);
                     int regionId = indicatorValueViewModel.IndicatorValues.FirstOrDefault().RegionId;
                     Models.Region region = _context.Region.AsNoTracking().FirstOrDefault(r => r.Id == regionId);
                     KazakhstanValuesEditByYearIndicator(region.Year, indicatorValueViewModel.IndicatorValues.FirstOrDefault().IndicatorId);
@@ -582,19 +578,6 @@ namespace AtlasSD.Controllers
                         change++;
                     }
                 }
-                //for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
-                //{
-                //    if(indicatorValues.FirstOrDefault(i => i.Region.Year == year).Id == 0)
-                //    {
-                //        //KazakhstanRegionsCreateByYear(indicatorValues.FirstOrDefault().Region.Year);
-                //        KazakhstanValuesCreateByYearIndicator(indicatorValues.FirstOrDefault().Region.Year, indicatorValues.FirstOrDefault().IndicatorId);
-                //    }
-                //    else
-                //    {
-                //        //KazakhstanRegionsEditByYear(indicatorValues.FirstOrDefault().Region.Year);
-                //        KazakhstanValuesEditByYearIndicator(indicatorValues.FirstOrDefault().Region.Year, indicatorValues.FirstOrDefault().IndicatorId);
-                //    }
-                //}
                 if (add > 0)
                 {
                     int regionId = indicatorValues.FirstOrDefault().RegionId;
@@ -641,7 +624,7 @@ namespace AtlasSD.Controllers
             ViewBag.BackLink = backlink;
             try
             {
-                // просмотр данных
+                // view data
                 if (!string.IsNullOrEmpty(Url))
                 {
                     if (Url.Last() == '/')
@@ -687,7 +670,7 @@ namespace AtlasSD.Controllers
                     ViewData["SourceId"] = new SelectList(_context.Source.OrderBy(s => s.Name), "Id", "Name");
                     return View();
                 }
-                // загрузка данных с сайта
+                // downloading data from the site
                 else
                 {
                     if (Year != null)
@@ -752,7 +735,7 @@ namespace AtlasSD.Controllers
                                     }
                                 }
                             }
-                            // найти такой регион
+                            // find such a region
                             double coincidence = StringCompare(regionName, jsonName);
                             if (coincidence > maxcoincidence)
                             {
@@ -966,21 +949,6 @@ namespace AtlasSD.Controllers
                                     }
                                 }
                                 worksheet.Cells[4, 1].Value = _sharedLocalizer["Source"];
-                                //if (indicatorValues.FirstOrDefault() != null)
-                                //{
-                                //    if (indicatorValues.FirstOrDefault().SourceId != null)
-                                //    {
-                                //        worksheet.Cells[5, 2].Value = _context.Source.FirstOrDefault(s => s.Id == indicatorValues.FirstOrDefault().SourceId).Name;
-                                //    }
-                                //    else
-                                //    {
-                                //        worksheet.Cells[5, 2].Value = null;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    worksheet.Cells[5, 2].Value = null;
-                                //}
                                 worksheet.Cells[5, 1].Value = _sharedLocalizer["Code"];
                                 worksheet.Cells[5, 1].Style.Font.Bold = true;
                                 worksheet.Cells[5, 2].Value = _sharedLocalizer["Region"];
@@ -1071,9 +1039,6 @@ namespace AtlasSD.Controllers
                         {
                         }
                     }
-                    //Indicator indicator = _context.Indicator.FirstOrDefault(i => i.Id == indicatorValueViewModel.IndicatorId);
-                    //Group group = _context.Group.FirstOrDefault(g => g.Id == indicatorValueViewModel.GroupId);
-                    //Bloc bloc = _context.Bloc.FirstOrDefault(b => b.Id == indicatorValueViewModel.BlocId);
                     List<Indicator> indicators = new List<Indicator>();
                     if (IndicatorId1 != null)
                     {
@@ -1347,13 +1312,6 @@ namespace AtlasSD.Controllers
             double maxLen = a.Length > b.Length ? a.Length : b.Length;
             int minLen = a.Length < b.Length ? a.Length : b.Length;
             int sameCharAtIndex = 0;
-            //for (int i = 0; i < minLen; i++) //Compare char by char
-            //{
-            //    if (a[i] == b[i])
-            //    {
-            //        sameCharAtIndex++;
-            //    }
-            //}
             for (int i = 0; i < a.Length; i++)
             {
                 if (b.IndexOf(a[i]) >= 0)
@@ -1368,8 +1326,8 @@ namespace AtlasSD.Controllers
 
         public void KazakhstanCreate()
         {
-            // добавить регион Казахстан
-            for(int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
+            // add region Kazakhstan
+            for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
             {
                 int kzcount = _context.Region.AsNoTracking().Count(r => r.Year == year && string.IsNullOrEmpty(r.Coordinates) && r.Code == Startup.Configuration["KazakhstanCode"]),
                     regionscount = _context.Region.AsNoTracking().Count(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]);
@@ -1389,7 +1347,7 @@ namespace AtlasSD.Controllers
                 }
             }
             _context.SaveChanges();
-            // добавить значения показателей региона Казахстан
+            // add the values of indicators of the region of Kazakhstan
             List<Indicator> indicators = _context.Indicator.AsNoTracking().ToList();
             for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
             {
@@ -1415,70 +1373,6 @@ namespace AtlasSD.Controllers
             }
             _context.SaveChanges();
         }
-
-        //public void KazakhstanCreateByIndicatorId(int IndicatorId)
-        //{
-        //    // добавить регион Казахстан
-        //    for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
-        //    {
-        //        int kzcount = _context.Region.AsNoTracking().Count(r => r.Year == year && string.IsNullOrEmpty(r.Coordinates) && r.Code == Startup.Configuration["KazakhstanCode"]),
-        //            regionscount = _context.Region.AsNoTracking().Count(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]);
-        //        if (kzcount == 0 && regionscount > 0)
-        //        {
-        //            Models.Region kz = new Models.Region()
-        //            {
-        //                Area = _context.Region.AsNoTracking().Where(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]).Sum(r => r.Area),
-        //                Code = Startup.Configuration["KazakhstanCode"],
-        //                NameEN = _sharedLocalizer.WithCulture(new CultureInfo("en"))["Kazakhstan"],
-        //                NameKK = _sharedLocalizer.WithCulture(new CultureInfo("kk"))["Kazakhstan"],
-        //                NameRU = _sharedLocalizer.WithCulture(new CultureInfo("ru"))["Kazakhstan"],
-        //                Population = _context.Region.AsNoTracking().Where(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]).Sum(r => r.Population),
-        //                Year = year
-        //            };
-        //            _context.Add(kz);
-        //        }
-        //    }
-        //    _context.SaveChanges();
-        //    // добавить значения показателя региона Казахстан
-        //    List<Indicator> indicators = _context.Indicator.AsNoTracking().ToList();
-        //    for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
-        //    {
-        //        Indicator indicator = _context.Indicator.AsNoTracking().FirstOrDefault(i => i.Id == IndicatorId);
-        //        List<IndicatorValue> indicatorValues = _context.IndicatorValue.AsNoTracking().Include(i => i.Region).Where(i => i.Region.Year == year && i.IndicatorId == indicator.Id).ToList();
-        //        int indicatorValueKZCount = _context.IndicatorValue
-        //            .Include(i => i.Region)
-        //            .Count(i => i.Region.Year == year && i.IndicatorId == indicator.Id && string.IsNullOrEmpty(i.Region.Coordinates) && i.Region.Code == Startup.Configuration["KazakhstanCode"]);
-        //        if (indicatorValueKZCount == 0 && indicatorValues.Count() > 0)
-        //        {
-        //            IndicatorValue indicatorValueKZ = new IndicatorValue()
-        //            {
-        //                IndicatorId = indicator.Id,
-        //                RegionId = _context.Region.AsNoTracking().FirstOrDefault(r => r.Year == year && string.IsNullOrEmpty(r.Coordinates) && r.Code == Startup.Configuration["KazakhstanCode"]).Id,
-        //                SourceId = indicatorValues.FirstOrDefault().SourceId,
-        //                Year = indicatorValues.FirstOrDefault().Region.Year,
-        //                Value = indicatorValues.Average(i => i.Value)
-        //            };
-        //            _context.Add(indicatorValueKZ);
-        //        }
-        //    }
-        //    _context.SaveChanges();
-        //}
-
-        //public void KazakhstanEdit()
-        //{
-        //    // изменить регион Казахстан
-        //    for (int year = Convert.ToInt32(Startup.Configuration["YearMin"]); year <= DateTime.Now.Year; year++)
-        //    {
-        //        Models.Region kz = _context.Region.AsNoTracking().FirstOrDefault(r => r.Year == year && string.IsNullOrEmpty(r.Coordinates) && r.Code == Startup.Configuration["KazakhstanCode"]);
-        //        if(kz !=null)
-        //        {
-        //            kz.Area = _context.Region.AsNoTracking().Where(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]).Sum(r => r.Area);
-        //            kz.Population = _context.Region.AsNoTracking().Where(r => r.Year == year && !string.IsNullOrEmpty(r.Coordinates) && r.Code != Startup.Configuration["KazakhstanCode"]).Sum(r => r.Population);
-        //            _context.Update(kz);
-        //        }
-        //    }
-        //    _context.SaveChanges();
-        //}
 
         public void KazakhstanRegionsCreateByYear(int Year)
         {

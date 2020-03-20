@@ -26,7 +26,6 @@ namespace AtlasSD.Controllers
         }
 
         // GET: Maps
-        //[Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> Index(string SortOrder, int? BlocId, int? GroupId, int? IndicatorId, string NameEN, string NameKK, string NameRU, string Description, int? Page)
         {
             string language = Request.HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.Culture.Name;
@@ -253,12 +252,8 @@ namespace AtlasSD.Controllers
         {
             int BlocId = _context.Bloc.OrderBy(b => b.NameCode).FirstOrDefault().Id,
                 GroupId = _context.Group.OrderBy(g => g.NameCode).Where(g => g.BlocId == BlocId).FirstOrDefault().Id;
-            //    IndicatorId = _context.Indicator.OrderBy(i => i.NameCode).Where(i => i.GroupId == GroupId).FirstOrDefault().Id;
             Map map = new Map
             {
-                //BlocId = BlocId,
-                //GroupId = GroupId,
-                //IndicatorId = IndicatorId,
                 MapIntervals = new List<MapInterval>()
                 {
                     new MapInterval()
@@ -499,7 +494,6 @@ namespace AtlasSD.Controllers
                 map.Colors = map.MapIntervals.Select(m => m.Color).ToArray();
                 map.IndicatorIds = map.MapIndicators.Select(m => m.IndicatorId).ToArray();
                 map.IndicatorColors = map.MapIndicators.Select(m => m.Color).ToArray();
-                //_context.Add(map);
                 Map map_old = _context.Map.AsNoTracking().FirstOrDefault(m => m.Id == map.Id);
                 _context.Log.Add(new Log()
                 {

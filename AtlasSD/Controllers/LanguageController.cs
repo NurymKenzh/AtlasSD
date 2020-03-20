@@ -15,9 +15,6 @@ namespace AtlasSD.Controllers
         {
             if (LanguageAbbrevation != null)
             {
-                //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(LanguageAbbrevation);
-                //CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(LanguageAbbrevation);
-
                 Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
                     CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(LanguageAbbrevation)),
@@ -25,9 +22,6 @@ namespace AtlasSD.Controllers
                 );
 
             }
-
-            //HttpContext.Session.SetString("Language", LanguageAbbrevation);
-
             return Redirect(Request.Headers["Referer"].ToString());
         }
     }

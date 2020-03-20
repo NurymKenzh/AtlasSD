@@ -27,8 +27,6 @@ namespace AtlasSD.Controllers
         [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> Index(string SortOrder, int? BlocId, int? GroupId, int? IndicatorId, int? Page)
         {
-            //var applicationDbContext = _context.ReferencePoint.Include(r => r.Indicator);
-            //return View(await applicationDbContext.ToListAsync());
             var referencePoints = _context.ReferencePoint
                 .Include(r => r.Indicator)
                 .Include(r => r.Indicator.Group)
@@ -242,53 +240,6 @@ namespace AtlasSD.Controllers
                     _context.Update(referencePoint);
                     await _context.SaveChangesAsync();
                     new IndicatorsController(_context, _sharedLocalizer).CalculateIndicatorsValues((int)referencePointViewModel.IndicatorId);
-                    //// => расчет значений зависимых индикаторов
-                    //var indicatorsrelated = _context.Indicator
-                    //    .AsNoTracking()
-                    //    .Where(i => i.Formula.Contains($"{Startup.Configuration["FormulaIdFirstChar"]}{referencePointViewModel.IndicatorId.ToString()}{Startup.Configuration["FormulaIdLastChar"]}"))
-                    //    .ToList();
-                    //foreach (var indicatorrelated in indicatorsrelated)
-                    //{
-                    //    var indicatorsall = _context.Indicator
-                    //        .AsNoTracking()
-                    //        .Where(i => i.Id != indicatorrelated.Id)
-                    //        .Include(i => i.Group)
-                    //        .ToList();
-                    //    List<IndicatorValue> indicatorrelatedValues = new List<IndicatorValue>();
-                    //    indicatorrelated.Formula = string.IsNullOrEmpty(indicatorrelated.Formula) ? "" : indicatorrelated.Formula;
-                    //    string formula_test = indicatorrelated.Formula;
-                    //    //if (!IndicatorsController.CheckFormula(formula_test, indicatorrelated.Type))
-                    //    if(new IndicatorsController(_context, _sharedLocalizer).CheckFormula(formula_test, indicatorrelated.Type))
-                    //    {
-
-                    //    }
-                    //    else
-                    //    {
-                    //        formula_test = indicatorrelated.Formula;
-                    //        for (int i = 0; i < indicatorsall.Count; i++)
-                    //        {
-                    //            if (!string.IsNullOrEmpty(indicatorsall[i].Code))
-                    //            {
-                    //                formula_test = formula_test.Replace(indicatorsall[i].Code, $"{Startup.Configuration["FormulaIdFirstChar"]}{indicatorsall[i].Id.ToString()}{Startup.Configuration["FormulaIdLastChar"]}");
-                    //            }
-                    //        }
-                    //        //indicatorrelatedValues = CalculateIndicatorValues(formula_test, indicatorrelated.Id);
-                    //        indicatorrelatedValues = new IndicatorsController(_context, _sharedLocalizer).CalculateIndicatorValues(formula_test, indicatorrelated.Id);
-                    //    }
-                    //    for (int i = 0; i < indicatorrelatedValues.Count(); i++)
-                    //    {
-                    //        if (indicatorrelatedValues[i].Id == 0)
-                    //        {
-                    //            _context.Add(indicatorrelatedValues[i]);
-                    //        }
-                    //        else
-                    //        {
-                    //            _context.Update(indicatorrelatedValues[i]);
-                    //        }
-                    //    }
-                    //}
-                    //await _context.SaveChangesAsync();
-                    //// <=
                 }
                 catch (DbUpdateConcurrencyException)
                 {
