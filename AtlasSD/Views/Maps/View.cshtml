@@ -212,7 +212,7 @@
     var chartmax = 0;
 
     var Source_baseour = new ol.source.TileWMS({
-        url: 'http://atlassd.kaznu.kz:8080/geoserver/AtlasSD/wms?',
+        url: '@Html.Raw(ViewBag.GeoServerURL)geoserver/AtlasSD/wms?',
         params: {
             'LAYERS': 'AtlasSD:BaseOur',
             'VERSION': '1.1.0',

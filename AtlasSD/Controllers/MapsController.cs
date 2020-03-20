@@ -677,6 +677,7 @@ namespace AtlasSD.Controllers
             MapSources = MapSourcesData.OrderBy(s => s.Text).ToList();
             ViewBag.MapSources = MapSources;
             ViewBag.KZ = _sharedLocalizer["Kazakhstan"];
+            ViewBag.GeoServerURL = Startup.Configuration["GeoServerURL"].ToString();
             return View(map);
         }
 
