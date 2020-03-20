@@ -34,7 +34,6 @@ namespace AtlasSD.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        //[Route("api/[controller]")]
         public IActionResult Index()
         {
             ViewBag.Blocs = _context.Bloc.OrderBy(b => b.Name).ToList();
@@ -43,7 +42,6 @@ namespace AtlasSD.Controllers
             return View();
         }
 
-        //[Route("api/[controller]")]
         public IActionResult About()
         {
             return View();
