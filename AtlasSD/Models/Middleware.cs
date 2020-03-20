@@ -29,18 +29,7 @@ namespace AtlasSD.Models
 
         private void BeginInvoke(HttpContext context)
         {
-            // Do custom work before controller execution
-            //string Language = _session.GetString("Language");
-            //if (!string.IsNullOrEmpty(Language))
-            //{
-            //    CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(Language);
-            //    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(Language);
-            //}
-            //else
-            //{
-            //    CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("ru");
-            //    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("ru");
-            //}
+            
         }
 
         private void EndInvoke(HttpContext context)

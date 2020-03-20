@@ -20,18 +20,13 @@ namespace AtlasSD.Models
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
-                //if (dbContext.Database.GetPendingMigrations().Any())
-                {
-                    //await dbContext.Database.MigrateAsync();
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                    
-                    foreach (var role in Roles)
+                foreach (var role in Roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
                     {
-                        if (!await roleManager.RoleExistsAsync(role))
-                        {
-                            await roleManager.CreateAsync(new IdentityRole(role));
-                        }
+                        await roleManager.CreateAsync(new IdentityRole(role));
                     }
                 }
             }
