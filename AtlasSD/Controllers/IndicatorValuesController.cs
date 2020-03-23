@@ -878,7 +878,7 @@ namespace AtlasSD.Controllers
                     List<Indicator> indicators = new List<Indicator>();
                     List<Group> groups = new List<Group>();
                     List<Bloc> blocs = new List<Bloc>();
-                    for(int i=0;i< indicatorValueViewModel.IndicatorIds.Length;i++)
+                    for(int i=0;i< indicatorValueViewModel.IndicatorIds?.Length;i++)
                     {
                         if(indicatorValueViewModel.IndicatorIds[i]!=null)
                         {
@@ -905,7 +905,7 @@ namespace AtlasSD.Controllers
                     }
                     using (ExcelPackage package = new ExcelPackage(file))
                     {
-                        for (int y = 0;y< indicatorValueViewModel.Years.Length;y++)
+                        for (int y = 0;y< indicatorValueViewModel.Years?.Length;y++)
                         {
                             var regions = _context.Region.Where(r => r.Year == indicatorValueViewModel.Years[y]
                                 && r.Code != Startup.Configuration["KazakhstanCode"]

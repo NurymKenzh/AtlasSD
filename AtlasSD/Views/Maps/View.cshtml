@@ -549,6 +549,9 @@
     }
 
     function Find() {
+        for (l = 0; l < layersfind.length; l++) {
+            layersfind[l].getSource().clear();
+        }
         for (l = map.getLayers().getArray().length - 1; l >= 0; l--) {
             if (map.getLayers().getArray()[l].get('name') == 'chart') {
                 map.removeLayer(map.getLayers().getArray()[l]);
@@ -561,12 +564,12 @@
                 if (features[j].get('Code') != '00') {
                     var add = true;
                     if ($("#min0").val()) {
-                        if (features[j].get('Value') < $("#min0").val()) {
+                        if (features[j].get('Value') <= $("#min0").val()) {
                             add = false;
                         }
                     }
                     if ($("#max0").val()) {
-                        if (features[j].get('Value') > $("#max0").val()) {
+                        if (features[j].get('Value') >= $("#max0").val()) {
                             add = false;
                         }
                     }
