@@ -255,5 +255,25 @@
       <DependentUpon>SharedResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Download\IndicatorValuesForm\Total population, people.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Download\Report\Population.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Help\HelpEN.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Help\HelpKK.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Help\HelpRU.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Upload\IndicatorValuesForm\del1.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
